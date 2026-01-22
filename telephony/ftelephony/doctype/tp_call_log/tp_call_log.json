@@ -24,6 +24,13 @@
   "caller",
   "recording_url",
   "end_time",
+  "section_break_billing",
+  "call_cost",
+  "call_cost_currency",
+  "column_break_billing",
+  "cost_calculated",
+  "reported_to_devops",
+  "devops_report_id",
   "section_break_kebz",
   "links"
  ],
@@ -122,6 +129,50 @@
    "fieldname": "end_time",
    "fieldtype": "Datetime",
    "label": "End Time"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_billing",
+   "fieldtype": "Section Break",
+   "label": "Billing"
+  },
+  {
+   "fieldname": "call_cost",
+   "fieldtype": "Currency",
+   "label": "Call Cost",
+   "precision": "2",
+   "read_only": 1
+  },
+  {
+   "default": "CHF",
+   "fieldname": "call_cost_currency",
+   "fieldtype": "Data",
+   "label": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_billing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "cost_calculated",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Cost Calculated"
+  },
+  {
+   "default": "0",
+   "fieldname": "reported_to_devops",
+   "fieldtype": "Check",
+   "hidden": 1,
+   "label": "Reported to DevOps"
+  },
+  {
+   "fieldname": "devops_report_id",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "DevOps Report ID"
   },
   {
    "fieldname": "section_break_kebz",
