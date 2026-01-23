@@ -1,0 +1,102 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-01-23 16:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "call_sid",
+  "participant_type",
+  "column_break_1",
+  "user",
+  "phone_number",
+  "section_break_status",
+  "status",
+  "column_break_status",
+  "joined_at",
+  "left_at",
+  "hold_start"
+ ],
+ "fields": [
+  {
+   "fieldname": "call_sid",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Call SID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "participant_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "Caller\nAgent\nTransfer Target",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Number"
+  },
+  {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "default": "Ringing",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Ringing\nConnected\nOn Hold\nLeft"
+  },
+  {
+   "fieldname": "column_break_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "joined_at",
+   "fieldtype": "Datetime",
+   "label": "Joined At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "left_at",
+   "fieldtype": "Datetime",
+   "label": "Left At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "hold_start",
+   "fieldtype": "Datetime",
+   "label": "Hold Start",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-23 16:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FTelephony",
+ "name": "TP Conference Participant",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

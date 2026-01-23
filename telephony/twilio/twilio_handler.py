@@ -8,6 +8,12 @@ from twilio.twiml.voice_response import Dial, VoiceResponse, Gather
 
 from .utils import get_public_url, merge_dicts
 
+# Conference-based architecture for call transfer support
+from telephony.ftelephony.doctype.tp_call_conference.tp_call_conference import (
+    generate_conference_name,
+    get_active_conference_by_call_sid,
+)
+
 
 class Twilio:
     """Twilio connector over TwilioClient."""
@@ -95,6 +101,80 @@ class Twilio:
 
     def get_call_info(self, call_sid):
         return self.twilio_client.calls(call_sid).fetch()
+
+    def get_conference_status_callback_url(self):
+        """URL for conference status callbacks."""
+        url_path = "/api/method/telephony.twilio.api.handle_conference_status"
+        return get_public_url(url_path)
+
+    def get_conference_participant_callback_url(self):
+        """URL for conference participant callbacks."""
+        url_path = "/api/method/telephony.twilio.api.handle_conference_participant"
+        return get_public_url(url_path)
+
+    def dial_into_conference(self, conference_name: str, to: str, caller_id: str, is_client: bool = False):
+        """Dial a participant into an existing conference via REST API.
+
+        Args:
+            conference_name: The friendly name of the conference
+            to: Phone number or client identity to dial
+            caller_id: Caller ID to show
+            is_client: If True, dial a softphone client; if False, dial a phone number
+        """
+        participant_callback = self.get_conference_participant_callback_url()
+
+        # Build the destination
+        if is_client:
+            to = f"client:{self.safe_identity(to)}"
+
+        try:
+            participant = self.twilio_client.conferences(conference_name).participants.create(
+                to=to,
+                from_=caller_id,
+                early_media=True,
+                beep=False,
+                start_conference_on_enter=True,
+                end_conference_on_exit=False,
+                status_callback=participant_callback,
+                status_callback_event=["initiated", "ringing", "answered", "completed"],
+            )
+            return participant
+        except Exception as e:
+            frappe.log_error("Conference Dial Error", f"Failed to dial {to} into {conference_name}: {str(e)}")
+            return None
+
+    def hold_participant(self, conference_name: str, call_sid: str, hold: bool = True, hold_url: str = None):
+        """Put a conference participant on hold or resume them.
+
+        Args:
+            conference_name: The friendly name of the conference
+            call_sid: The call SID of the participant
+            hold: True to hold, False to resume
+            hold_url: Optional URL for hold music
+        """
+        try:
+            self.twilio_client.conferences(conference_name).participants(call_sid).update(
+                hold=hold,
+                hold_url=hold_url or get_public_url("/api/method/telephony.twilio.api.hold_music"),
+            )
+            return True
+        except Exception as e:
+            frappe.log_error("Hold Error", f"Failed to hold/resume {call_sid}: {str(e)}")
+            return False
+
+    def remove_participant(self, conference_name: str, call_sid: str):
+        """Remove a participant from a conference.
+
+        Args:
+            conference_name: The friendly name of the conference
+            call_sid: The call SID of the participant to remove
+        """
+        try:
+            self.twilio_client.conferences(conference_name).participants(call_sid).delete()
+            return True
+        except Exception as e:
+            frappe.log_error("Remove Participant Error", f"Failed to remove {call_sid}: {str(e)}")
+            return False
 
     def generate_twilio_client_response(self, client, ring_tone="at"):
         """Generates voice call instructions to forward the call to agents computer."""
@@ -189,10 +269,38 @@ class IncomingCall:
         return self._ring_simultaneous(twilio, agents, config)
 
     def _ring_simultaneous(self, twilio, agents, config):
-        """Ring all agents at the same time."""
+        """Ring all agents at the same time using Conference architecture.
+
+        This creates a conference that allows call transfers.
+        The caller joins first, then agents are dialed in via REST API.
+        """
+        call_sid = self.meta.get("CallSid") if self.meta else None
+        conference_name = generate_conference_name(call_sid or "unknown")
+
+        # Create conference record for tracking
+        try:
+            conference_doc = frappe.get_doc({
+                "doctype": "TP Call Conference",
+                "conference_name": conference_name,
+                "original_call_sid": call_sid,
+                "caller_number": self.from_number,
+                "called_number": self.to_number,
+                "status": "Active",
+            })
+            conference_doc.add_participant(
+                call_sid=call_sid,
+                participant_type="Caller",
+                phone_number=self.from_number,
+                status="Ringing",
+            )
+            conference_doc.insert(ignore_permissions=True)
+            frappe.db.commit()
+        except Exception as e:
+            frappe.log_error("Conference Create Error", f"Failed to create conference: {str(e)}")
+
+        # Build TwiML to put caller in conference
         resp = VoiceResponse()
 
-        # Build dial with all agents
         dial = Dial(
             caller_id=self.from_number,
             timeout=config.get("ring_timeout", 30),
@@ -202,34 +310,75 @@ class IncomingCall:
             action=get_public_url("/api/method/telephony.twilio.api.handle_dial_status"),
         )
 
-        for agent in agents:
-            if agent["call_receiving_device"] == "Phone" and agent.get("mobile_no"):
-                dial.number(
-                    agent["mobile_no"],
-                    status_callback_event="initiated ringing answered completed",
-                    status_callback=twilio.get_update_call_status_callback_url(),
-                    status_callback_method="POST",
-                )
-            elif agent["call_receiving_device"] == "Computer":
-                dial.client(
-                    twilio.safe_identity(agent["user"]),
-                    status_callback_event="initiated ringing answered completed",
-                    status_callback=twilio.get_update_call_status_callback_url(),
-                    status_callback_method="POST",
-                )
+        # Put caller into conference
+        dial.conference(
+            conference_name,
+            start_conference_on_enter=True,
+            end_conference_on_exit=True,
+            beep=False,
+            wait_url=get_public_url("/api/method/telephony.twilio.api.conference_wait_music"),
+            status_callback=twilio.get_conference_status_callback_url(),
+            status_callback_event="start end join leave",
+        )
 
         resp.append(dial)
+
+        # Queue agent dial requests (will be processed by conference start callback)
+        # Store agents to dial in cache for the conference callback to pick up
+        agents_to_dial = []
+        for agent in agents:
+            agents_to_dial.append({
+                "user": agent.get("user"),
+                "mobile_no": agent.get("mobile_no"),
+                "device": agent["call_receiving_device"],
+            })
+
+        if agents_to_dial:
+            frappe.cache().set_value(
+                f"conf_agents_{conference_name}",
+                {
+                    "agents": agents_to_dial,
+                    "caller_id": self.to_number,  # Use the called number as caller ID for agents
+                    "from_number": self.from_number,
+                },
+                expires_in_sec=120,
+            )
+
         return resp
 
     def _ring_sequential(self, twilio, agents, config):
-        """Ring agents one by one based on priority."""
-        resp = VoiceResponse()
+        """Ring agents one by one based on priority using Conference architecture.
 
-        # Get first agent
+        Creates conference and dials first agent. If not answered, callback dials next.
+        """
         if not agents:
             return self._handle_no_agents(config)
 
-        first_agent = agents[0]
+        call_sid = self.meta.get("CallSid") if self.meta else None
+        conference_name = generate_conference_name(call_sid or "unknown")
+
+        # Create conference record
+        try:
+            conference_doc = frappe.get_doc({
+                "doctype": "TP Call Conference",
+                "conference_name": conference_name,
+                "original_call_sid": call_sid,
+                "caller_number": self.from_number,
+                "called_number": self.to_number,
+                "status": "Active",
+            })
+            conference_doc.add_participant(
+                call_sid=call_sid,
+                participant_type="Caller",
+                phone_number=self.from_number,
+                status="Ringing",
+            )
+            conference_doc.insert(ignore_permissions=True)
+            frappe.db.commit()
+        except Exception as e:
+            frappe.log_error("Conference Create Error", f"Failed to create conference: {str(e)}")
+
+        resp = VoiceResponse()
         timeout = config.get("ring_timeout", 30)
 
         dial = Dial(
@@ -238,66 +387,134 @@ class IncomingCall:
             record="record-from-answer-dual" if config.get("recording_enabled") else "do-not-record",
             recording_status_callback=twilio.get_recording_status_callback_url() if config.get("recording_enabled") else None,
             recording_status_callback_event="completed" if config.get("recording_enabled") else None,
-            action=get_public_url("/api/method/telephony.twilio.api.handle_sequential_dial"),
+            action=get_public_url("/api/method/telephony.twilio.api.handle_dial_status"),
         )
 
-        if first_agent["call_receiving_device"] == "Phone" and first_agent.get("mobile_no"):
-            dial.number(
-                first_agent["mobile_no"],
-                status_callback_event="initiated ringing answered completed",
-                status_callback=twilio.get_update_call_status_callback_url(),
-                status_callback_method="POST",
-            )
-        elif first_agent["call_receiving_device"] == "Computer":
-            dial.client(
-                twilio.safe_identity(first_agent["user"]),
-                status_callback_event="initiated ringing answered completed",
-                status_callback=twilio.get_update_call_status_callback_url(),
-                status_callback_method="POST",
-            )
+        # Put caller into conference
+        dial.conference(
+            conference_name,
+            start_conference_on_enter=True,
+            end_conference_on_exit=True,
+            beep=False,
+            wait_url=get_public_url("/api/method/telephony.twilio.api.conference_wait_music"),
+            status_callback=twilio.get_conference_status_callback_url(),
+            status_callback_event="start end join leave",
+        )
 
         resp.append(dial)
+
+        # Store agents for sequential dialing (first agent first)
+        agents_to_dial = []
+        for agent in agents:
+            agents_to_dial.append({
+                "user": agent.get("user"),
+                "mobile_no": agent.get("mobile_no"),
+                "device": agent["call_receiving_device"],
+            })
+
+        frappe.cache().set_value(
+            f"conf_agents_{conference_name}",
+            {
+                "agents": agents_to_dial,
+                "caller_id": self.to_number,
+                "from_number": self.from_number,
+                "mode": "sequential",
+                "current_index": 0,
+                "timeout": timeout,
+            },
+            expires_in_sec=300,
+        )
+
         return resp
 
     def _ring_round_robin(self, twilio, agents, config):
-        """Ring agents in round robin fashion."""
-        # Get current round robin index from cache or start fresh
-        cache_key = f"twilio_rr_{self.to_number}"
-        current_index = frappe.cache().get_value(cache_key) or 0
+        """Ring agents in round robin fashion using Conference architecture.
 
-        # Move to next agent
+        Creates conference and dials the next agent in rotation.
+        """
+        if not agents:
+            return self._handle_no_agents(config)
+
+        # Get current round robin index
+        rr_cache_key = f"twilio_rr_{self.to_number}"
+        current_index = frappe.cache().get_value(rr_cache_key) or 0
+
+        # Move to next agent for next call
         next_index = (current_index + 1) % len(agents)
-        frappe.cache().set_value(cache_key, next_index, expires_in_sec=3600)
+        frappe.cache().set_value(rr_cache_key, next_index, expires_in_sec=3600)
 
-        # Ring the selected agent
-        agent = agents[current_index]
+        call_sid = self.meta.get("CallSid") if self.meta else None
+        conference_name = generate_conference_name(call_sid or "unknown")
+
+        # Create conference record
+        try:
+            conference_doc = frappe.get_doc({
+                "doctype": "TP Call Conference",
+                "conference_name": conference_name,
+                "original_call_sid": call_sid,
+                "caller_number": self.from_number,
+                "called_number": self.to_number,
+                "status": "Active",
+            })
+            conference_doc.add_participant(
+                call_sid=call_sid,
+                participant_type="Caller",
+                phone_number=self.from_number,
+                status="Ringing",
+            )
+            conference_doc.insert(ignore_permissions=True)
+            frappe.db.commit()
+        except Exception as e:
+            frappe.log_error("Conference Create Error", f"Failed to create conference: {str(e)}")
+
         resp = VoiceResponse()
+        timeout = config.get("ring_timeout", 30)
 
         dial = Dial(
             caller_id=self.from_number,
-            timeout=config.get("ring_timeout", 30),
+            timeout=timeout,
             record="record-from-answer-dual" if config.get("recording_enabled") else "do-not-record",
             recording_status_callback=twilio.get_recording_status_callback_url() if config.get("recording_enabled") else None,
             recording_status_callback_event="completed" if config.get("recording_enabled") else None,
             action=get_public_url("/api/method/telephony.twilio.api.handle_dial_status"),
         )
 
-        if agent["call_receiving_device"] == "Phone" and agent.get("mobile_no"):
-            dial.number(
-                agent["mobile_no"],
-                status_callback_event="initiated ringing answered completed",
-                status_callback=twilio.get_update_call_status_callback_url(),
-                status_callback_method="POST",
-            )
-        elif agent["call_receiving_device"] == "Computer":
-            dial.client(
-                twilio.safe_identity(agent["user"]),
-                status_callback_event="initiated ringing answered completed",
-                status_callback=twilio.get_update_call_status_callback_url(),
-                status_callback_method="POST",
-            )
+        # Put caller into conference
+        dial.conference(
+            conference_name,
+            start_conference_on_enter=True,
+            end_conference_on_exit=True,
+            beep=False,
+            wait_url=get_public_url("/api/method/telephony.twilio.api.conference_wait_music"),
+            status_callback=twilio.get_conference_status_callback_url(),
+            status_callback_event="start end join leave",
+        )
 
         resp.append(dial)
+
+        # Reorder agents starting from current_index for round robin
+        ordered_agents = agents[current_index:] + agents[:current_index]
+        agents_to_dial = []
+        for agent in ordered_agents:
+            agents_to_dial.append({
+                "user": agent.get("user"),
+                "mobile_no": agent.get("mobile_no"),
+                "device": agent["call_receiving_device"],
+            })
+
+        frappe.cache().set_value(
+            f"conf_agents_{conference_name}",
+            {
+                "agents": agents_to_dial,
+                "caller_id": self.to_number,
+                "from_number": self.from_number,
+                "mode": "round_robin",
+                "current_index": 0,
+                "timeout": timeout,
+            },
+            expires_in_sec=300,
+        )
+
         return resp
 
     def _handle_outside_hours(self, config):

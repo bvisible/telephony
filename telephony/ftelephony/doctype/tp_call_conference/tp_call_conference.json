@@ -1,0 +1,143 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:conference_name",
+ "creation": "2026-01-23 16:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "conference_name",
+  "conference_sid",
+  "status",
+  "column_break_main",
+  "original_call_sid",
+  "created_at",
+  "ended_at",
+  "section_break_numbers",
+  "caller_number",
+  "column_break_numbers",
+  "called_number",
+  "section_break_participants",
+  "participants"
+ ],
+ "fields": [
+  {
+   "fieldname": "conference_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Conference Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "conference_sid",
+   "fieldtype": "Data",
+   "label": "Conference SID",
+   "read_only": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Active\nOn Hold\nTransferring\nEnded"
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "original_call_sid",
+   "fieldtype": "Data",
+   "label": "Original Call SID",
+   "read_only": 1
+  },
+  {
+   "default": "Now",
+   "fieldname": "created_at",
+   "fieldtype": "Datetime",
+   "label": "Created At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "ended_at",
+   "fieldtype": "Datetime",
+   "label": "Ended At",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_numbers",
+   "fieldtype": "Section Break",
+   "label": "Call Information"
+  },
+  {
+   "fieldname": "caller_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Caller Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_numbers",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "called_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Called Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_participants",
+   "fieldtype": "Section Break",
+   "label": "Participants"
+  },
+  {
+   "fieldname": "participants",
+   "fieldtype": "Table",
+   "label": "Participants",
+   "options": "TP Conference Participant"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-23 16:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FTelephony",
+ "name": "TP Call Conference",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Telephony User",
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "conference_name",
+ "track_changes": 1
+}

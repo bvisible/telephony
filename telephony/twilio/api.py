@@ -72,7 +72,8 @@ def twilio_incoming_call_handler(**kwargs):
     call_details = TwilioCallDetails(args)
     create_call_log(call_details)
 
-    resp = IncomingCall(args.From, args.To).process()
+    # Pass metadata to IncomingCall for conference tracking
+    resp = IncomingCall(args.From, args.To, meta=dict(args)).process()
     return Response(resp.to_xml(), mimetype="text/xml")
 
 
@@ -477,3 +478,238 @@ def _send_voicemail_notification(email, from_number, to_number, recording_url, d
         )
     except Exception as e:
         frappe.log_error("Voicemail Email Error", str(e))
+
+
+# =============================================================================
+# Conference Callbacks for Call Transfer Support
+# =============================================================================
+
+@frappe.whitelist(allow_guest=True)
+def handle_conference_status(**kwargs):
+    """Handle conference status updates from Twilio.
+
+    Called when conference starts, ends, or participant joins/leaves.
+    """
+    from twilio.twiml.voice_response import VoiceResponse
+
+    args = frappe._dict(kwargs)
+    conference_name = args.FriendlyName or args.ConferenceSid
+    status_event = args.StatusCallbackEvent
+
+    frappe.logger().info(f"Conference {conference_name} event: {status_event}")
+
+    try:
+        if status_event == "conference-start":
+            # Conference started - dial agents
+            _dial_agents_to_conference(conference_name)
+
+        elif status_event == "participant-join":
+            # Update participant status in our records
+            call_sid = args.CallSid
+            _update_conference_participant(conference_name, call_sid, "Connected")
+
+        elif status_event == "participant-leave":
+            # Update participant status
+            call_sid = args.CallSid
+            _update_conference_participant(conference_name, call_sid, "Left")
+
+        elif status_event == "conference-end":
+            # End conference in our records
+            _end_conference(conference_name)
+
+    except Exception as e:
+        frappe.log_error("Conference Status Error", f"{conference_name}: {str(e)}")
+
+    resp = VoiceResponse()
+    return Response(resp.to_xml(), mimetype="text/xml")
+
+
+@frappe.whitelist(allow_guest=True)
+def handle_conference_participant(**kwargs):
+    """Handle participant status updates in conference."""
+    args = frappe._dict(kwargs)
+    call_sid = args.CallSid
+    call_status = args.CallStatus
+    conference_name = args.get("FriendlyName") or args.get("ConferenceSid")
+
+    frappe.logger().info(f"Participant {call_sid} status: {call_status}")
+
+    try:
+        if call_status == "completed":
+            _update_conference_participant(conference_name, call_sid, "Left")
+        elif call_status == "answered":
+            _update_conference_participant(conference_name, call_sid, "Connected")
+        elif call_status in ["no-answer", "busy", "failed", "canceled"]:
+            _handle_agent_no_answer(conference_name, call_sid)
+    except Exception as e:
+        frappe.log_error("Participant Status Error", f"{call_sid}: {str(e)}")
+
+    return "OK"
+
+
+@frappe.whitelist(allow_guest=True)
+def conference_wait_music(**kwargs):
+    """Return TwiML for conference waiting music."""
+    from twilio.twiml.voice_response import VoiceResponse
+
+    resp = VoiceResponse()
+    # Play waiting music while caller waits for agent
+    resp.play(url="http://com.twilio.sounds.music.s3.amazonaws.com/MARKOVICHAMP-B7U4sLvFlo.mp3", loop=10)
+    return Response(resp.to_xml(), mimetype="text/xml")
+
+
+@frappe.whitelist(allow_guest=True)
+def hold_music(**kwargs):
+    """Return TwiML for hold music."""
+    from twilio.twiml.voice_response import VoiceResponse
+
+    resp = VoiceResponse()
+    resp.play(url="http://com.twilio.sounds.music.s3.amazonaws.com/ClockworkWaltz.mp3", loop=10)
+    return Response(resp.to_xml(), mimetype="text/xml")
+
+
+def _dial_agents_to_conference(conference_name: str):
+    """Dial agents into a conference when it starts."""
+    # Get cached agent info
+    cache_key = f"conf_agents_{conference_name}"
+    agent_data = frappe.cache().get_value(cache_key)
+
+    if not agent_data:
+        frappe.logger().warning(f"No agent data for conference {conference_name}")
+        return
+
+    agents = agent_data.get("agents", [])
+    caller_id = agent_data.get("caller_id")
+    mode = agent_data.get("mode", "simultaneous")
+
+    if not agents:
+        return
+
+    twilio = Twilio.connect()
+    if not twilio:
+        return
+
+    if mode == "simultaneous":
+        # Dial all agents at once
+        for agent in agents:
+            _dial_single_agent(twilio, conference_name, agent, caller_id)
+    else:
+        # Sequential/Round Robin - dial first agent only
+        first_agent = agents[0]
+        _dial_single_agent(twilio, conference_name, first_agent, caller_id)
+
+
+def _dial_single_agent(twilio, conference_name: str, agent: dict, caller_id: str):
+    """Dial a single agent into the conference."""
+    try:
+        if agent["device"] == "Phone" and agent.get("mobile_no"):
+            participant = twilio.dial_into_conference(
+                conference_name=conference_name,
+                to=agent["mobile_no"],
+                caller_id=caller_id,
+                is_client=False,
+            )
+        elif agent["device"] == "Computer" and agent.get("user"):
+            participant = twilio.dial_into_conference(
+                conference_name=conference_name,
+                to=agent["user"],
+                caller_id=caller_id,
+                is_client=True,
+            )
+        else:
+            return None
+
+        # Add participant to conference record
+        if participant:
+            _add_agent_participant(conference_name, participant.call_sid, agent)
+
+        return participant
+    except Exception as e:
+        frappe.log_error("Agent Dial Error", f"Failed to dial agent: {str(e)}")
+        return None
+
+
+def _add_agent_participant(conference_name: str, call_sid: str, agent: dict):
+    """Add an agent participant to the conference record."""
+    try:
+        conf_doc = frappe.get_doc("TP Call Conference", conference_name)
+        conf_doc.add_participant(
+            call_sid=call_sid,
+            participant_type="Agent",
+            phone_number=agent.get("mobile_no"),
+            user=agent.get("user"),
+            status="Ringing",
+        )
+    except Exception as e:
+        frappe.log_error("Add Participant Error", f"Conference {conference_name}: {str(e)}")
+
+
+def _update_conference_participant(conference_name: str, call_sid: str, status: str):
+    """Update a participant's status in the conference record."""
+    try:
+        if not conference_name:
+            # Try to find conference by call_sid
+            from telephony.ftelephony.doctype.tp_call_conference.tp_call_conference import (
+                get_active_conference_by_call_sid,
+            )
+            conf_doc = get_active_conference_by_call_sid(call_sid)
+        else:
+            if frappe.db.exists("TP Call Conference", conference_name):
+                conf_doc = frappe.get_doc("TP Call Conference", conference_name)
+            else:
+                return
+
+        if conf_doc:
+            conf_doc.update_participant_status(call_sid, status)
+    except Exception as e:
+        frappe.log_error("Update Participant Error", f"{call_sid}: {str(e)}")
+
+
+def _handle_agent_no_answer(conference_name: str, call_sid: str):
+    """Handle when an agent doesn't answer in sequential/round robin mode."""
+    try:
+        # Update participant status
+        _update_conference_participant(conference_name, call_sid, "Left")
+
+        # Check if we need to dial next agent (sequential/round robin)
+        cache_key = f"conf_agents_{conference_name}"
+        agent_data = frappe.cache().get_value(cache_key)
+
+        if not agent_data:
+            return
+
+        mode = agent_data.get("mode", "simultaneous")
+
+        if mode in ["sequential", "round_robin"]:
+            agents = agent_data.get("agents", [])
+            current_index = agent_data.get("current_index", 0)
+            next_index = current_index + 1
+
+            if next_index < len(agents):
+                # Dial next agent
+                agent_data["current_index"] = next_index
+                frappe.cache().set_value(cache_key, agent_data, expires_in_sec=300)
+
+                twilio = Twilio.connect()
+                if twilio:
+                    next_agent = agents[next_index]
+                    _dial_single_agent(twilio, conference_name, next_agent, agent_data.get("caller_id"))
+            else:
+                # No more agents - cleanup cache
+                frappe.cache().delete_value(cache_key)
+    except Exception as e:
+        frappe.log_error("Agent No Answer Error", f"{conference_name}: {str(e)}")
+
+
+def _end_conference(conference_name: str):
+    """Mark a conference as ended in our records."""
+    try:
+        if frappe.db.exists("TP Call Conference", conference_name):
+            conf_doc = frappe.get_doc("TP Call Conference", conference_name)
+            conf_doc.end_conference()
+
+        # Clean up cache
+        cache_key = f"conf_agents_{conference_name}"
+        frappe.cache().delete_value(cache_key)
+    except Exception as e:
+        frappe.log_error("End Conference Error", f"{conference_name}: {str(e)}")
