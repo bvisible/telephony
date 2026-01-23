@@ -201,3 +201,279 @@ def fetch_applications():
         ",".join(applications),
     )
     return applications
+
+
+@frappe.whitelist(allow_guest=True)
+def handle_dial_status(**kwargs):
+    """Handle dial completion callback - used when no one answers."""
+    from twilio.twiml.voice_response import VoiceResponse
+
+    args = frappe._dict(kwargs)
+    dial_status = args.DialCallStatus
+
+    resp = VoiceResponse()
+
+    # If no one answered, check config for action
+    if dial_status in ["no-answer", "busy", "failed"]:
+        # Try to get routing config
+        to_number = args.To
+        from telephony.ftelephony.doctype.tp_phone_number_config.tp_phone_number_config import (
+            get_routing_config,
+        )
+
+        config = get_routing_config(to_number)
+
+        if config:
+            no_answer_action = config.get("no_answer_action", "Voicemail")
+
+            if no_answer_action == "Voicemail" and config.get("voicemail_enabled"):
+                # Play voicemail greeting and record
+                greeting = config.get("voicemail_greeting") or _(
+                    "Please leave a message after the tone."
+                )
+                resp.say(greeting, language="en-US")
+                resp.record(
+                    max_length=120,
+                    action="/api/method/telephony.twilio.api.handle_voicemail",
+                    transcribe=config.get("voicemail_transcribe", False),
+                    transcribe_callback="/api/method/telephony.twilio.api.handle_voicemail_transcription"
+                    if config.get("voicemail_transcribe")
+                    else None,
+                    play_beep=True,
+                )
+            elif no_answer_action == "Message":
+                resp.say(
+                    _("All agents are currently busy. Please try again later."),
+                    language="en-US",
+                )
+                resp.hangup()
+            else:
+                resp.hangup()
+        else:
+            # No config, just say message and hang up
+            resp.say(
+                _("Agent is unavailable to take the call, please call after some time."),
+                language="en-US",
+            )
+            resp.hangup()
+    else:
+        # Call was answered or other status, just end
+        resp.hangup()
+
+    return Response(resp.to_xml(), mimetype="text/xml")
+
+
+@frappe.whitelist(allow_guest=True)
+def handle_sequential_dial(**kwargs):
+    """Handle sequential dial callback - move to next agent if no answer."""
+    from twilio.twiml.voice_response import VoiceResponse, Dial
+
+    args = frappe._dict(kwargs)
+    dial_status = args.DialCallStatus
+
+    resp = VoiceResponse()
+
+    # If answered, just hang up (call already connected)
+    if dial_status == "completed":
+        resp.hangup()
+        return Response(resp.to_xml(), mimetype="text/xml")
+
+    # Get routing config
+    to_number = args.To
+    from_number = args.From
+
+    from telephony.ftelephony.doctype.tp_phone_number_config.tp_phone_number_config import (
+        get_routing_config,
+    )
+
+    config = get_routing_config(to_number)
+
+    if not config:
+        resp.say(
+            _("Agent is unavailable to take the call, please call after some time."),
+            language="en-US",
+        )
+        resp.hangup()
+        return Response(resp.to_xml(), mimetype="text/xml")
+
+    agents = config.get("available_agents", [])
+
+    # Get current agent index from call metadata or cache
+    cache_key = f"twilio_seq_{args.CallSid}"
+    current_index = frappe.cache().get_value(cache_key) or 0
+    next_index = current_index + 1
+
+    if next_index >= len(agents):
+        # No more agents, go to no-answer action
+        frappe.cache().delete_value(cache_key)
+        no_answer_action = config.get("no_answer_action", "Voicemail")
+
+        if no_answer_action == "Voicemail" and config.get("voicemail_enabled"):
+            greeting = config.get("voicemail_greeting") or _(
+                "Please leave a message after the tone."
+            )
+            resp.say(greeting, language="en-US")
+            resp.record(
+                max_length=120,
+                action="/api/method/telephony.twilio.api.handle_voicemail",
+                transcribe=config.get("voicemail_transcribe", False),
+                transcribe_callback="/api/method/telephony.twilio.api.handle_voicemail_transcription"
+                if config.get("voicemail_transcribe")
+                else None,
+                play_beep=True,
+            )
+        elif no_answer_action == "Message":
+            resp.say(
+                _("All agents are currently busy. Please try again later."),
+                language="en-US",
+            )
+            resp.hangup()
+        else:
+            resp.hangup()
+    else:
+        # Try next agent
+        frappe.cache().set_value(cache_key, next_index, expires_in_sec=300)
+        twilio = Twilio.connect()
+        next_agent = agents[next_index]
+
+        dial = Dial(
+            caller_id=from_number,
+            timeout=config.get("ring_timeout", 30),
+            record="record-from-answer-dual" if config.get("recording_enabled") else "do-not-record",
+            recording_status_callback=twilio.get_recording_status_callback_url()
+            if config.get("recording_enabled")
+            else None,
+            recording_status_callback_event="completed" if config.get("recording_enabled") else None,
+            action="/api/method/telephony.twilio.api.handle_sequential_dial",
+        )
+
+        if next_agent["call_receiving_device"] == "Phone" and next_agent.get("mobile_no"):
+            dial.number(
+                next_agent["mobile_no"],
+                status_callback_event="initiated ringing answered completed",
+                status_callback=twilio.get_update_call_status_callback_url(),
+                status_callback_method="POST",
+            )
+        elif next_agent["call_receiving_device"] == "Computer":
+            dial.client(
+                twilio.safe_identity(next_agent["user"]),
+                status_callback_event="initiated ringing answered completed",
+                status_callback=twilio.get_update_call_status_callback_url(),
+                status_callback_method="POST",
+            )
+
+        resp.append(dial)
+
+    return Response(resp.to_xml(), mimetype="text/xml")
+
+
+@frappe.whitelist(allow_guest=True)
+def handle_voicemail(**kwargs):
+    """Handle voicemail recording completion."""
+    from twilio.twiml.voice_response import VoiceResponse
+
+    args = frappe._dict(kwargs)
+
+    # Save voicemail info
+    try:
+        recording_url = args.RecordingUrl
+        call_sid = args.CallSid
+        to_number = args.To
+        from_number = args.From
+        duration = args.RecordingDuration
+
+        # Create voicemail record
+        voicemail = frappe.get_doc(
+            {
+                "doctype": "TP Voicemail",
+                "call_sid": call_sid,
+                "from_number": from_number,
+                "to_number": to_number,
+                "recording_url": recording_url,
+                "duration": duration,
+                "status": "New",
+            }
+        )
+        voicemail.insert(ignore_permissions=True)
+        frappe.db.commit()
+
+        # Send notification email if configured
+        from telephony.ftelephony.doctype.tp_phone_number_config.tp_phone_number_config import (
+            get_routing_config,
+        )
+
+        config = get_routing_config(to_number)
+        if config and config.get("voicemail_email"):
+            _send_voicemail_notification(
+                config.get("voicemail_email"),
+                from_number,
+                to_number,
+                recording_url,
+                duration,
+            )
+
+    except Exception as e:
+        frappe.log_error("Voicemail Save Error", str(e))
+
+    resp = VoiceResponse()
+    resp.say(_("Thank you. Goodbye."), language="en-US")
+    resp.hangup()
+
+    return Response(resp.to_xml(), mimetype="text/xml")
+
+
+@frappe.whitelist(allow_guest=True)
+def handle_voicemail_transcription(**kwargs):
+    """Handle voicemail transcription callback."""
+    args = frappe._dict(kwargs)
+
+    try:
+        call_sid = args.CallSid
+        transcription_text = args.TranscriptionText
+        transcription_status = args.TranscriptionStatus
+
+        if transcription_status == "completed" and transcription_text:
+            # Update voicemail record with transcription
+            voicemail_name = frappe.db.get_value(
+                "TP Voicemail", {"call_sid": call_sid}, "name"
+            )
+            if voicemail_name:
+                frappe.db.set_value(
+                    "TP Voicemail", voicemail_name, "transcription", transcription_text
+                )
+                frappe.db.commit()
+    except Exception as e:
+        frappe.log_error("Voicemail Transcription Error", str(e))
+
+    return "OK"
+
+
+def _send_voicemail_notification(email, from_number, to_number, recording_url, duration):
+    """Send email notification for new voicemail."""
+    try:
+        subject = _("New Voicemail from {0}").format(from_number)
+        message = _(
+            """
+            <p>You have a new voicemail:</p>
+            <ul>
+                <li><strong>From:</strong> {from_number}</li>
+                <li><strong>To:</strong> {to_number}</li>
+                <li><strong>Duration:</strong> {duration} seconds</li>
+            </ul>
+            <p><a href="{recording_url}">Listen to voicemail</a></p>
+            """
+        ).format(
+            from_number=from_number,
+            to_number=to_number,
+            duration=duration,
+            recording_url=recording_url,
+        )
+
+        frappe.sendmail(
+            recipients=[email],
+            subject=subject,
+            message=message,
+            now=True,
+        )
+    except Exception as e:
+        frappe.log_error("Voicemail Email Error", str(e))

@@ -4,7 +4,7 @@ from frappe.utils.password import get_decrypted_password
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import VoiceGrant
 from twilio.rest import Client as TwilioClient
-from twilio.twiml.voice_response import Dial, VoiceResponse
+from twilio.twiml.voice_response import Dial, VoiceResponse, Gather
 
 from .utils import get_public_url, merge_dicts
 
@@ -136,9 +136,236 @@ class IncomingCall:
 
     def process(self):
         """Process the incoming call
-        * Figure out who is going to pick the call (call attender)
-        * Check call attender settings and forward the call to Phone
+        * First check for routing configuration (TP Phone Number Config)
+        * If exists, use advanced routing logic
+        * Otherwise, fall back to legacy behavior
         """
+        # Try to get routing configuration
+        routing_config = self._get_routing_config()
+
+        if routing_config:
+            return self._process_with_routing(routing_config)
+
+        # Fall back to legacy behavior
+        return self._process_legacy()
+
+    def _get_routing_config(self):
+        """Get routing configuration for the called number."""
+        try:
+            from telephony.ftelephony.doctype.tp_phone_number_config.tp_phone_number_config import (
+                get_routing_config,
+            )
+
+            return get_routing_config(self.to_number)
+        except Exception as e:
+            frappe.log_error("Routing Config Error", f"Failed to get routing config: {str(e)}")
+            return None
+
+    def _process_with_routing(self, config):
+        """Process call using advanced routing configuration."""
+        twilio = Twilio.connect()
+
+        # Check business hours
+        if not config.get("within_business_hours"):
+            return self._handle_outside_hours(config)
+
+        # Get available agents
+        agents = config.get("available_agents", [])
+
+        if not agents:
+            return self._handle_no_agents(config)
+
+        # Generate response based on ring mode
+        ring_mode = config.get("ring_mode", "Simultaneous")
+
+        if ring_mode == "Simultaneous":
+            return self._ring_simultaneous(twilio, agents, config)
+        elif ring_mode == "Sequential":
+            return self._ring_sequential(twilio, agents, config)
+        elif ring_mode == "Round Robin":
+            return self._ring_round_robin(twilio, agents, config)
+
+        # Default to simultaneous
+        return self._ring_simultaneous(twilio, agents, config)
+
+    def _ring_simultaneous(self, twilio, agents, config):
+        """Ring all agents at the same time."""
+        resp = VoiceResponse()
+
+        # Build dial with all agents
+        dial = Dial(
+            caller_id=self.from_number,
+            timeout=config.get("ring_timeout", 30),
+            record="record-from-answer-dual" if config.get("recording_enabled") else "do-not-record",
+            recording_status_callback=twilio.get_recording_status_callback_url() if config.get("recording_enabled") else None,
+            recording_status_callback_event="completed" if config.get("recording_enabled") else None,
+            action=get_public_url("/api/method/telephony.twilio.api.handle_dial_status"),
+        )
+
+        for agent in agents:
+            if agent["call_receiving_device"] == "Phone" and agent.get("mobile_no"):
+                dial.number(
+                    agent["mobile_no"],
+                    status_callback_event="initiated ringing answered completed",
+                    status_callback=twilio.get_update_call_status_callback_url(),
+                    status_callback_method="POST",
+                )
+            elif agent["call_receiving_device"] == "Computer":
+                dial.client(
+                    twilio.safe_identity(agent["user"]),
+                    status_callback_event="initiated ringing answered completed",
+                    status_callback=twilio.get_update_call_status_callback_url(),
+                    status_callback_method="POST",
+                )
+
+        resp.append(dial)
+        return resp
+
+    def _ring_sequential(self, twilio, agents, config):
+        """Ring agents one by one based on priority."""
+        resp = VoiceResponse()
+
+        # Get first agent
+        if not agents:
+            return self._handle_no_agents(config)
+
+        first_agent = agents[0]
+        timeout = config.get("ring_timeout", 30)
+
+        dial = Dial(
+            caller_id=self.from_number,
+            timeout=timeout,
+            record="record-from-answer-dual" if config.get("recording_enabled") else "do-not-record",
+            recording_status_callback=twilio.get_recording_status_callback_url() if config.get("recording_enabled") else None,
+            recording_status_callback_event="completed" if config.get("recording_enabled") else None,
+            action=get_public_url("/api/method/telephony.twilio.api.handle_sequential_dial"),
+        )
+
+        if first_agent["call_receiving_device"] == "Phone" and first_agent.get("mobile_no"):
+            dial.number(
+                first_agent["mobile_no"],
+                status_callback_event="initiated ringing answered completed",
+                status_callback=twilio.get_update_call_status_callback_url(),
+                status_callback_method="POST",
+            )
+        elif first_agent["call_receiving_device"] == "Computer":
+            dial.client(
+                twilio.safe_identity(first_agent["user"]),
+                status_callback_event="initiated ringing answered completed",
+                status_callback=twilio.get_update_call_status_callback_url(),
+                status_callback_method="POST",
+            )
+
+        resp.append(dial)
+        return resp
+
+    def _ring_round_robin(self, twilio, agents, config):
+        """Ring agents in round robin fashion."""
+        # Get current round robin index from cache or start fresh
+        cache_key = f"twilio_rr_{self.to_number}"
+        current_index = frappe.cache().get_value(cache_key) or 0
+
+        # Move to next agent
+        next_index = (current_index + 1) % len(agents)
+        frappe.cache().set_value(cache_key, next_index, expires_in_sec=3600)
+
+        # Ring the selected agent
+        agent = agents[current_index]
+        resp = VoiceResponse()
+
+        dial = Dial(
+            caller_id=self.from_number,
+            timeout=config.get("ring_timeout", 30),
+            record="record-from-answer-dual" if config.get("recording_enabled") else "do-not-record",
+            recording_status_callback=twilio.get_recording_status_callback_url() if config.get("recording_enabled") else None,
+            recording_status_callback_event="completed" if config.get("recording_enabled") else None,
+            action=get_public_url("/api/method/telephony.twilio.api.handle_dial_status"),
+        )
+
+        if agent["call_receiving_device"] == "Phone" and agent.get("mobile_no"):
+            dial.number(
+                agent["mobile_no"],
+                status_callback_event="initiated ringing answered completed",
+                status_callback=twilio.get_update_call_status_callback_url(),
+                status_callback_method="POST",
+            )
+        elif agent["call_receiving_device"] == "Computer":
+            dial.client(
+                twilio.safe_identity(agent["user"]),
+                status_callback_event="initiated ringing answered completed",
+                status_callback=twilio.get_update_call_status_callback_url(),
+                status_callback_method="POST",
+            )
+
+        resp.append(dial)
+        return resp
+
+    def _handle_outside_hours(self, config):
+        """Handle call when outside business hours."""
+        resp = VoiceResponse()
+        action = config.get("outside_hours_action", "Message")
+
+        if action == "Voicemail" and config.get("voicemail_enabled"):
+            return self._send_to_voicemail(config)
+        elif action == "Message":
+            message = config.get("outside_hours_message") or _(
+                "We are currently closed. Please call back during business hours."
+            )
+            resp.say(message, language="en-US")
+            resp.hangup()
+        else:
+            resp.hangup()
+
+        return resp
+
+    def _handle_no_agents(self, config):
+        """Handle call when no agents are available."""
+        resp = VoiceResponse()
+        action = config.get("no_answer_action", "Voicemail")
+
+        if action == "Voicemail" and config.get("voicemail_enabled"):
+            return self._send_to_voicemail(config)
+        elif action == "Message":
+            resp.say(
+                _("All agents are currently busy. Please try again later."),
+                language="en-US",
+            )
+            resp.hangup()
+        elif action == "Forward":
+            # TODO: Implement forwarding to another number
+            resp.say(
+                _("All agents are currently busy. Please try again later."),
+                language="en-US",
+            )
+            resp.hangup()
+        else:
+            resp.hangup()
+
+        return resp
+
+    def _send_to_voicemail(self, config):
+        """Send caller to voicemail."""
+        resp = VoiceResponse()
+
+        # Play greeting
+        greeting = config.get("voicemail_greeting") or _(
+            "Please leave a message after the tone."
+        )
+        resp.say(greeting, language="en-US")
+
+        # Record voicemail
+        resp.record(
+            max_length=120,
+            action=get_public_url("/api/method/telephony.twilio.api.handle_voicemail"),
+            transcribe=config.get("voicemail_transcribe", False),
+            transcribe_callback=get_public_url("/api/method/telephony.twilio.api.handle_voicemail_transcription") if config.get("voicemail_transcribe") else None,
+            play_beep=True,
+        )
+
+        return resp
+
+    def _process_legacy(self):
+        """Legacy call processing (fallback when no routing config exists)."""
         twilio = Twilio.connect()
         owners = get_twilio_number_owners(self.to_number)
         attender = get_the_call_attender(owners)

@@ -1,0 +1,264 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "field:phone_number",
+ "creation": "2026-01-23 14:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "phone_number",
+  "friendly_name",
+  "column_break_main",
+  "is_active",
+  "section_break_routing",
+  "ring_mode",
+  "ring_timeout",
+  "column_break_routing",
+  "max_ring_time",
+  "no_answer_action",
+  "section_break_agents",
+  "routing_agents",
+  "section_break_hours",
+  "use_business_hours",
+  "business_hours",
+  "outside_hours_action",
+  "column_break_hours",
+  "outside_hours_message",
+  "section_break_voicemail",
+  "voicemail_enabled",
+  "voicemail_greeting",
+  "column_break_vm",
+  "voicemail_email",
+  "voicemail_transcribe",
+  "section_break_recording",
+  "recording_enabled",
+  "recording_channels",
+  "column_break_rec",
+  "recording_trim_silence"
+ ],
+ "fields": [
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Phone Number",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "friendly_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Friendly Name"
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Active"
+  },
+  {
+   "fieldname": "section_break_routing",
+   "fieldtype": "Section Break",
+   "label": "Routing Configuration"
+  },
+  {
+   "default": "Simultaneous",
+   "description": "How to ring agents when a call comes in",
+   "fieldname": "ring_mode",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Ring Mode",
+   "options": "Simultaneous\nSequential\nRound Robin"
+  },
+  {
+   "default": "30",
+   "description": "Seconds to ring each agent in sequential mode",
+   "fieldname": "ring_timeout",
+   "fieldtype": "Int",
+   "label": "Ring Timeout (s)"
+  },
+  {
+   "fieldname": "column_break_routing",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "60",
+   "description": "Maximum total ringing time before no-answer action",
+   "fieldname": "max_ring_time",
+   "fieldtype": "Int",
+   "label": "Max Ring Time (s)"
+  },
+  {
+   "default": "Voicemail",
+   "description": "What to do if no agent answers",
+   "fieldname": "no_answer_action",
+   "fieldtype": "Select",
+   "label": "No Answer Action",
+   "options": "Voicemail\nHangup\nForward\nMessage"
+  },
+  {
+   "fieldname": "section_break_agents",
+   "fieldtype": "Section Break",
+   "label": "Routing Agents"
+  },
+  {
+   "description": "Agents to route calls to, in order of priority",
+   "fieldname": "routing_agents",
+   "fieldtype": "Table",
+   "label": "Agents",
+   "options": "TP Routing Agent"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_hours",
+   "fieldtype": "Section Break",
+   "label": "Business Hours"
+  },
+  {
+   "default": "0",
+   "fieldname": "use_business_hours",
+   "fieldtype": "Check",
+   "label": "Use Business Hours"
+  },
+  {
+   "depends_on": "use_business_hours",
+   "fieldname": "business_hours",
+   "fieldtype": "Table",
+   "label": "Business Hours",
+   "options": "TP Business Hours"
+  },
+  {
+   "default": "Voicemail",
+   "depends_on": "use_business_hours",
+   "fieldname": "outside_hours_action",
+   "fieldtype": "Select",
+   "label": "Outside Hours Action",
+   "options": "Voicemail\nHangup\nMessage"
+  },
+  {
+   "fieldname": "column_break_hours",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.use_business_hours && doc.outside_hours_action == 'Message'",
+   "fieldname": "outside_hours_message",
+   "fieldtype": "Small Text",
+   "label": "Outside Hours Message"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_voicemail",
+   "fieldtype": "Section Break",
+   "label": "Voicemail"
+  },
+  {
+   "default": "1",
+   "fieldname": "voicemail_enabled",
+   "fieldtype": "Check",
+   "label": "Voicemail Enabled"
+  },
+  {
+   "depends_on": "voicemail_enabled",
+   "fieldname": "voicemail_greeting",
+   "fieldtype": "Small Text",
+   "label": "Voicemail Greeting"
+  },
+  {
+   "fieldname": "column_break_vm",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "voicemail_enabled",
+   "description": "Send voicemail notification to this email",
+   "fieldname": "voicemail_email",
+   "fieldtype": "Data",
+   "label": "Notification Email",
+   "options": "Email"
+  },
+  {
+   "default": "0",
+   "depends_on": "voicemail_enabled",
+   "fieldname": "voicemail_transcribe",
+   "fieldtype": "Check",
+   "label": "Transcribe Voicemail"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_recording",
+   "fieldtype": "Section Break",
+   "label": "Call Recording"
+  },
+  {
+   "default": "0",
+   "fieldname": "recording_enabled",
+   "fieldtype": "Check",
+   "label": "Record Calls"
+  },
+  {
+   "default": "dual",
+   "depends_on": "recording_enabled",
+   "description": "dual = both sides, record-from-answer-dual = from answer",
+   "fieldname": "recording_channels",
+   "fieldtype": "Select",
+   "label": "Recording Mode",
+   "options": "dual\nrecord-from-answer-dual\nrecord-from-ringing-dual"
+  },
+  {
+   "fieldname": "column_break_rec",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "depends_on": "recording_enabled",
+   "fieldname": "recording_trim_silence",
+   "fieldtype": "Check",
+   "label": "Trim Silence"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-23 14:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FTelephony",
+ "name": "TP Phone Number Config",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "TP Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "friendly_name",
+ "track_changes": 1
+}

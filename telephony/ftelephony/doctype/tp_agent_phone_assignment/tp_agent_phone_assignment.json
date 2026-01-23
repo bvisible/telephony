@@ -1,0 +1,75 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-01-23 12:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "phone_number",
+  "friendly_name",
+  "column_break_main",
+  "is_primary",
+  "ring_delay",
+  "column_break_perms",
+  "can_listen_recordings"
+ ],
+ "fields": [
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Phone Number",
+   "reqd": 1
+  },
+  {
+   "fieldname": "friendly_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Name"
+  },
+  {
+   "fieldname": "column_break_main",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_primary",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Primary"
+  },
+  {
+   "default": "0",
+   "description": "Seconds to wait before ringing this agent for this number",
+   "fieldname": "ring_delay",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Ring Delay (s)"
+  },
+  {
+   "fieldname": "column_break_perms",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "can_listen_recordings",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Can Listen Recordings"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-23 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FTelephony",
+ "name": "TP Agent Phone Assignment",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -11,6 +11,12 @@
   "column_break_lekf",
   "mobile_no",
   "default_medium",
+  "section_break_status",
+  "is_available",
+  "column_break_status",
+  "priority",
+  "section_break_assigned",
+  "assigned_numbers",
   "section_break_riia",
   "twilio",
   "twilio_number",
@@ -56,8 +62,47 @@
    "options": "\nTwilio\nExotel"
   },
   {
+   "fieldname": "section_break_status",
+   "fieldtype": "Section Break",
+   "label": "Availability"
+  },
+  {
+   "default": "1",
+   "description": "When unchecked, this agent will not receive incoming calls",
+   "fieldname": "is_available",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Available"
+  },
+  {
+   "fieldname": "column_break_status",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "10",
+   "description": "Lower number = higher priority in call routing",
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority"
+  },
+  {
+   "collapsible": 0,
+   "fieldname": "section_break_assigned",
+   "fieldtype": "Section Break",
+   "label": "Assigned Phone Numbers"
+  },
+  {
+   "description": "Phone numbers this agent can receive calls from. Configure ring delay per number.",
+   "fieldname": "assigned_numbers",
+   "fieldtype": "Table",
+   "label": "Assigned Numbers",
+   "options": "TP Agent Phone Assignment"
+  },
+  {
+   "collapsible": 1,
    "fieldname": "section_break_riia",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Legacy Configuration"
   },
   {
    "default": "0",
@@ -99,7 +144,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-10 14:58:41.344291",
+ "modified": "2026-01-23 12:00:00.000000",
  "modified_by": "Administrator",
  "module": "FTelephony",
  "name": "TP Telephony Agent",

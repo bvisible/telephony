@@ -1,0 +1,139 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "TP-VM-.#####",
+ "creation": "2026-01-23 15:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "call_sid",
+  "column_break_1",
+  "status",
+  "section_break_caller",
+  "from_number",
+  "column_break_caller",
+  "to_number",
+  "section_break_recording",
+  "recording_url",
+  "column_break_recording",
+  "duration",
+  "section_break_transcription",
+  "transcription"
+ ],
+ "fields": [
+  {
+   "fieldname": "call_sid",
+   "fieldtype": "Data",
+   "label": "Call SID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "New",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "New\nListened\nArchived"
+  },
+  {
+   "fieldname": "section_break_caller",
+   "fieldtype": "Section Break",
+   "label": "Caller Information"
+  },
+  {
+   "fieldname": "from_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "From Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_caller",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "to_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "To Number",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_recording",
+   "fieldtype": "Section Break",
+   "label": "Recording"
+  },
+  {
+   "fieldname": "recording_url",
+   "fieldtype": "Data",
+   "label": "Recording URL",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_recording",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "duration",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Duration (seconds)",
+   "read_only": 1
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_transcription",
+   "fieldtype": "Section Break",
+   "label": "Transcription"
+  },
+  {
+   "fieldname": "transcription",
+   "fieldtype": "Small Text",
+   "label": "Transcription",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-23 15:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "FTelephony",
+ "name": "TP Voicemail",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Telephony User",
+   "write": 1
+  }
+ ],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "from_number",
+ "track_changes": 1
+}
