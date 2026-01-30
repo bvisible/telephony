@@ -117,6 +117,10 @@ def update_call_log(call_sid, status=None):
             call_log.start_time = get_datetime_from_timestamp(call_details.start_time)
             call_log.end_time = get_datetime_from_timestamp(call_details.end_time)
 
+            # Calculate call cost when call is completed
+            if call_log.status == "Completed" and not call_log.cost_calculated:
+                _calculate_call_cost(call_log, call_details)
+
             call_log.save(ignore_permissions=True)
             frappe.db.commit()  # nosemgrep
             return call_log
@@ -713,3 +717,133 @@ def _end_conference(conference_name: str):
         frappe.cache().delete_value(cache_key)
     except Exception as e:
         frappe.log_error("End Conference Error", f"{conference_name}: {str(e)}")
+
+
+# =============================================================================
+# Call Cost Calculation
+# =============================================================================
+
+def _calculate_call_cost(call_log, call_details):
+    """Calculate and update call cost from Twilio call details.
+
+    Twilio provides the cost in USD. We convert to CHF and store it.
+
+    Args:
+        call_log: TP Call Log document
+        call_details: Twilio call resource object
+    """
+    try:
+        # Get price from Twilio (negative value means debit)
+        price = call_details.price
+        price_unit = call_details.price_unit
+
+        if price is None:
+            # Price not yet available, will be calculated on next update
+            return
+
+        # Convert price to positive value (Twilio returns negative for debits)
+        cost = abs(float(price))
+
+        # Convert to CHF if not already
+        if price_unit and price_unit.upper() != "CHF":
+            cost = _convert_to_chf(cost, price_unit)
+
+        # Update call log
+        call_log.call_cost = cost
+        call_log.call_cost_currency = "CHF"
+        call_log.cost_calculated = 1
+
+        frappe.logger().info(f"Call {call_log.id} cost calculated: CHF {cost:.4f}")
+
+    except Exception as e:
+        frappe.log_error("Call Cost Calculation Error", f"Call {call_log.id}: {str(e)}")
+
+
+def _convert_to_chf(amount: float, from_currency: str) -> float:
+    """Convert amount from source currency to CHF.
+
+    Uses ERPNext currency exchange if available, otherwise uses fixed rates.
+
+    Args:
+        amount: Amount in source currency
+        from_currency: Source currency code (e.g., 'USD')
+
+    Returns:
+        Amount converted to CHF
+    """
+    if from_currency.upper() == "CHF":
+        return amount
+
+    # Try to get exchange rate from ERPNext
+    try:
+        exchange_rate = frappe.db.get_value(
+            "Currency Exchange",
+            {"from_currency": from_currency.upper(), "to_currency": "CHF"},
+            "exchange_rate",
+            order_by="date desc",
+        )
+        if exchange_rate:
+            return amount * float(exchange_rate)
+    except Exception:
+        pass
+
+    # Fallback to approximate fixed rates (USD to CHF)
+    fixed_rates = {
+        "USD": 0.88,  # Approximate USD to CHF rate
+        "EUR": 0.95,  # Approximate EUR to CHF rate
+        "GBP": 1.10,  # Approximate GBP to CHF rate
+    }
+
+    rate = fixed_rates.get(from_currency.upper(), 1.0)
+    return amount * rate
+
+
+@frappe.whitelist()
+def recalculate_call_costs(from_date=None, to_date=None):
+    """Recalculate costs for calls that don't have cost calculated.
+
+    This is useful for backfilling costs for existing calls.
+
+    Args:
+        from_date: Optional start date filter
+        to_date: Optional end date filter
+    """
+    filters = {
+        "telephony_medium": "Twilio",
+        "status": "Completed",
+        "cost_calculated": 0,
+    }
+
+    if from_date:
+        filters["creation"] = [">=", from_date]
+    if to_date:
+        filters["creation"] = ["<=", to_date] if "creation" not in filters else ["between", [from_date, to_date]]
+
+    calls = frappe.get_all("TP Call Log", filters=filters, fields=["name", "id"])
+
+    twilio = Twilio.connect()
+    if not twilio:
+        return {"error": "Twilio not connected"}
+
+    updated = 0
+    errors = 0
+
+    for call in calls:
+        try:
+            call_details = twilio.get_call_info(call.id)
+            call_log = frappe.get_doc("TP Call Log", call.name)
+            _calculate_call_cost(call_log, call_details)
+            call_log.save(ignore_permissions=True)
+            updated += 1
+        except Exception as e:
+            frappe.log_error("Recalculate Cost Error", f"Call {call.id}: {str(e)}")
+            errors += 1
+
+    frappe.db.commit()
+
+    return {
+        "success": True,
+        "updated": updated,
+        "errors": errors,
+        "message": f"Recalculated costs for {updated} calls ({errors} errors)",
+    }
