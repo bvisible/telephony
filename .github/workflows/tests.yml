@@ -1,0 +1,29 @@
+# Fleet app tests: every direct push to version-15, every PR, and nightly.
+# Mechanics live in bvisible/neoffice-devops (.github/workflows/frappe-app-ci.yml):
+# bench init on OUR frappe fork, deps, blocking build, run-tests, report to the
+# hub which opens/closes the repo's [CI] issue in bvisible/neoffice-maintenance.
+name: Tests
+on:
+  push:
+    branches: [version-15]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      test_args:
+        description: "Extra args for bench run-tests (e.g. --debug-records)"
+        required: false
+        default: ""
+  schedule:
+    - cron: "0 3 * * *"
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ci:
+    uses: bvisible/neoffice-devops/.github/workflows/frappe-app-ci.yml@main
+    with:
+      app: telephony
+      install_apps: "erpnext"
+      test_args: ${{ inputs.test_args || '' }}
+    secrets:
+      CI_REPORT_SECRET: ${{ secrets.CI_REPORT_SECRET }}
