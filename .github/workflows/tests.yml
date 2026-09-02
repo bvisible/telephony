@@ -1,5 +1,5 @@
 # Fleet app tests: every direct push to version-15, every PR, and nightly.
-# Mechanics live in bvisible/neoffice-devops (.github/workflows/frappe-app-ci.yml):
+# Mechanics live in bvisible/neoffice-ci (public: reusable workflows must be public for public callers):
 # bench init on OUR frappe fork, deps, blocking build, run-tests, report to the
 # hub which opens/closes the repo's [CI] issue in bvisible/neoffice-maintenance.
 name: Tests
@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   ci:
-    uses: bvisible/neoffice-devops/.github/workflows/frappe-app-ci.yml@main
+    uses: bvisible/neoffice-ci/.github/workflows/frappe-app-ci.yml@main
     with:
       app: telephony
       install_apps: "erpnext"
