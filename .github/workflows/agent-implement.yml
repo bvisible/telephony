@@ -1,0 +1,49 @@
+# Agent implementation lane — fired by the hub (repository_dispatch) when a
+# human labels a tracker issue ready-for-agent + app:<this app>. The payload
+# carries the whole issue, so no cross-repo read is needed. The agent
+# implements on a branch and opens a PR toward version-15 — it NEVER pushes to
+# version-15 itself (fleet two-lane rule). PRs made with the workflow token do
+# not trigger CI, so the agent dispatches tests.yml on its branch explicitly.
+name: Agent implement
+on:
+  repository_dispatch:
+    types: [implement-issue]
+concurrency:
+  group: agent-issue-${{ github.event.client_payload.issue_number }}
+  cancel-in-progress: false
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+  id-token: write
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: version-15
+          fetch-depth: 0
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: '--max-turns 90 --allowedTools "Bash,Edit,Write,Read,Glob,Grep"'
+          prompt: |
+            Tu implémentes une issue du tracker de la flotte sur ${{ github.repository }} (base : version-15).
+
+            ISSUE : bvisible/neoffice-maintenance#${{ github.event.client_payload.issue_number }}
+            URL : ${{ github.event.client_payload.url }}
+            TITRE : ${{ github.event.client_payload.title }}
+            CORPS :
+            ${{ github.event.client_payload.body }}
+
+            RÈGLES STRICTES :
+            1. `git checkout -b agent/issue-${{ github.event.client_payload.issue_number }}` depuis version-15.
+            2. Implémente. Lis le CLAUDE.md du dépôt et respecte-le : commentaires de code en anglais, chaînes utilisateur traduisibles, et si ce dépôt est un fork upstream, marque CHAQUE modification `//// Neoffice` avec la raison.
+            3. Ajoute ou adapte des tests qui prouvent le changement quand c'est pertinent.
+            4. Commits clairs (sans co-auteur ni mention d'IA), pousse la branche, puis ouvre la PR : `gh pr create --base version-15 --title "..." --body "..."` — le corps explique quoi/pourquoi/comment vérifier et cite l'URL complète de l'issue.
+            5. Déclenche la CI sur ta branche : `gh workflow run tests.yml --ref agent/issue-${{ github.event.client_payload.issue_number }}`.
+            6. INTERDIT : pousser sur version-15, merger quoi que ce soit, fermer l'issue. Ta seule sortie est la PR.
