@@ -25,5 +25,5 @@ jobs:
       app: telephony
       install_apps: "erpnext"
       test_args: ${{ inputs.test_args || '' }}
-    secrets:
-      CI_REPORT_SECRET: ${{ secrets.CI_REPORT_SECRET }}
+    # inherit: CI_REPORT_SECRET + FLEET_READ_TOKEN (private bvisible deps)
+    secrets: inherit
