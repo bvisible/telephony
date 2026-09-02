@@ -1,0 +1,27 @@
+# Merge on version-15 = deploy tonight. The merge is the HUMAN act of the
+# automation loop (agents only open PRs); this workflow tells the hub, which
+# merge-appends the app into the Nightly Deploy queue and comments the tracker
+# issue when the branch names one (agent/issue-N). Direct pushes to version-15
+# deploy through the same nightly queue but are queued by hand — this hook
+# only fires for merged PRs, where the merge click is the explicit decision.
+name: Deploy on merge
+on:
+  pull_request:
+    types: [closed]
+    branches: [version-15]
+jobs:
+  queue:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Queue the app for tonight's nightly deploy
+        run: |
+          curl -sS --max-time 20 -X POST \
+            "https://neoservice.neoffice.me/api/method/neoffice_devops.github.deploy_hook.pr_merged" \
+            --data-urlencode "secret=${{ secrets.CI_REPORT_SECRET }}" \
+            --data-urlencode "repo=${{ github.repository }}" \
+            --data-urlencode "app=telephony" \
+            --data-urlencode "pr=${{ github.event.pull_request.number }}" \
+            --data-urlencode "head_ref=${{ github.event.pull_request.head.ref }}" \
+            --data-urlencode "base_ref=${{ github.event.pull_request.base.ref }}"
