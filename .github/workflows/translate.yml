@@ -1,0 +1,17 @@
+name: Translate
+# Auto-translate new user-facing strings nightly with Sonnet (fr). Mechanics in
+# bvisible/neoffice-ci (translate-po.yml): only empty msgstr are filled, human
+# translations are never touched, placeholders verified, PO only, commit [skip ci].
+on:
+  schedule:
+    - cron: "31 3 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  i18n:
+    uses: bvisible/neoffice-ci/.github/workflows/translate-po.yml@main
+    with:
+      app: telephony
+      install_apps: erpnext
+    secrets: inherit
