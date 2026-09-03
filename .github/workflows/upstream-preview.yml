@@ -1,0 +1,18 @@
+name: Upstream preview
+# Weekly measurement for the frappe/erpnext upgrade (tracker #138): the same CI
+# as tests.yml but the bench is initialised on UPSTREAM frappe/frappe and
+# frappe/erpnext (version-15) instead of our forks. Reports to a separate
+# [CI amont] issue (key ci-upstream::) — never pollutes the normal [CI] issue.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "52 5 * * 1"
+jobs:
+  preview:
+    uses: bvisible/neoffice-ci/.github/workflows/frappe-app-ci.yml@main
+    with:
+      app: telephony
+      install_apps: "erpnext"
+      upstream_preview: true
+    # inherit: CI_REPORT_SECRET + FLEET_READ_TOKEN (private bvisible deps such as neoffice_theme)
+    secrets: inherit
