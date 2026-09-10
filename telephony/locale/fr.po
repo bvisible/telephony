@@ -76,10 +76,13 @@ msgstr "SID du compte"
 msgid "Active"
 msgstr "Actif"
 
+# no opinion on purpose: repeating the source erases the translation another
+# app ships (neoffice-maintenance#335)
 #. Option for the 'Type' (Select) field in DocType 'TP Conference Participant'
 #. Label of a Link field in DocType 'TP Routing Agent'
 #: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
 #: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
+#, fuzzy
 msgid "Agent"
 msgstr "Agent"
 
@@ -411,8 +414,11 @@ msgstr "Début de la mise en attente"
 msgid "How to ring agents when a call comes in"
 msgstr "Comment faire sonner les agents lors d'un appel entrant"
 
+# no opinion on purpose: repeating the source erases the translation another
+# app ships (neoffice-maintenance#335)
 #. Label of a Data field in DocType 'TP Call Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#, fuzzy
 msgid "ID"
 msgstr "ID"
 
