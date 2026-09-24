@@ -1029,7 +1029,7 @@ msgstr "Utilisateur"
 #. Label of a Data field in DocType 'TP Telephony Agent'
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
 msgid "User Name"
-msgstr "Nom d&#39;utilisateur"
+msgstr "Nom d'utilisateur"
 
 #. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone
 #. Number
