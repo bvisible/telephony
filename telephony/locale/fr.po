@@ -587,6 +587,11 @@ msgstr "Email de notification"
 msgid "Number"
 msgstr "Numéro"
 
+#: telephony/i18n_anchors.py:21
+msgctxt "TP Telephony Phone"
+msgid "Number"
+msgstr "Numéro"
+
 #. Option for the 'Status' (Select) field in DocType 'TP Call Conference'
 #. Option for the 'Status' (Select) field in DocType 'TP Conference
 #. Participant'
