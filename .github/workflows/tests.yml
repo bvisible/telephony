@@ -17,7 +17,10 @@ on:
     - cron: "0 3 * * *"
 concurrency:
   group: tests-${{ github.ref }}
-  cancel-in-progress: true
+  # A push to version-15 no longer cuts the run before it: with several pushes within minutes of a long
+  # run, every run was cancelled before its end and none gave a verdict. A run still waiting gives way
+  # to a newer one, so one runs and one waits at most; the runs of a pull request still cancel each other.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   ci:
     uses: bvisible/neoffice-ci/.github/workflows/frappe-app-ci.yml@main
