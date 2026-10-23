@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telephony VERSION\n"
 "Report-Msgid-Bugs-To: pratik@frappe.io\n"
-"POT-Creation-Date: 2026-10-22 03:43+0000\n"
+"POT-Creation-Date: 2026-10-23 03:43+0000\n"
 "PO-Revision-Date: 2026-05-12 16:22+0034\n"
 "Last-Translator: pratik@frappe.io\n"
 "Language-Team: pratik@frappe.io\n"
@@ -16,9 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"Generated-By: Babel 2.13.1\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: telephony/twilio/api.py:460
+#: telephony/twilio/api.py:461
+#, python-brace-format
 msgid ""
 "\n"
 "            <p>You have a new voicemail:</p>\n"
@@ -41,38 +42,38 @@ msgstr ""
 "            "
 
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:111
 msgid " App Name"
 msgstr " Nom de l'application"
 
 #. Label of a Data field in DocType 'TP Exotel Settings'
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:80
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:83
 msgid "API Key"
 msgstr "Clé API"
 
 #. Label of a Password field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:103
 msgid "API Secret"
 msgstr "Secret API"
 
 #. Label of a Password field in DocType 'TP Exotel Settings'
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:92
 msgid "API Token"
 msgstr "Jeton API"
 
 #. Label of a Data field in DocType 'TP Exotel Settings'
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:48
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:59
 msgid "Account SID"
 msgstr "SID du compte"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Conference'
 #. Label of a Check field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:47
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:64
 msgid "Active"
 msgstr "Actif"
 
@@ -80,8 +81,8 @@ msgstr "Actif"
 # app ships (neoffice-maintenance#335)
 #. Option for the 'Type' (Select) field in DocType 'TP Conference Participant'
 #. Label of a Link field in DocType 'TP Routing Agent'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:34
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:21
 #, fuzzy
 msgid "Agent"
 msgstr "Agent"
@@ -98,19 +99,19 @@ msgid "Agent priorities must be unique"
 msgstr "Les priorités des agents doivent être uniques"
 
 #. Label of a Table field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:115
 msgid "Agents"
 msgstr "Agents"
 
 #. Description of the 'Agents' (Table) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:112
 msgid "Agents to route calls to, in order of priority"
 msgstr "Agents vers lesquels acheminer les appels, par ordre de priorité"
 
 #. Name of a role
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:129
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:157
 msgid "All"
 msgstr "Tous"
 
@@ -122,209 +123,209 @@ msgstr ""
 "Tous les agents sont actuellement occupés. Veuillez réessayer plus tard."
 
 #. Option for the 'Status' (Select) field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:42
 msgid "Archived"
 msgstr "Archivé"
 
 #. Label of a Table field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:98
 msgid "Assigned Numbers"
 msgstr "Numéros attribués"
 
 #. Label of a Section Break field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:92
 msgid "Assigned Phone Numbers"
 msgstr "Numéros de téléphone attribués"
 
 #. Label of a Password field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:71
 msgid "Auth Token"
 msgstr "Jeton d'authentification"
 
 #. Label of a Section Break field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:67
 msgid "Availability"
 msgstr "Disponibilité"
 
 #. Label of a Check field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:75
 msgid "Available"
 msgstr "Disponible"
 
 #. Label of a Section Break field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:137
 msgid "Billing"
 msgstr "Facturation"
 
 #. Label of a Section Break field in DocType 'TP Phone Number Config'
 #. Label of a Table field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:122
 msgid "Business Hours"
 msgstr "Heures d'ouverture"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "Busy"
 msgstr "Occupé"
 
 #. Label of a Currency field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:142
 msgid "Call Cost"
 msgstr "Coût de l'appel"
 
 #. Label of a Section Break field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:75
 msgid "Call Information"
 msgstr "Informations sur l'appel"
 
 #. Label of a Link field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:113
 msgid "Call Received By"
 msgstr "Appel reçu par"
 
 #. Label of a Section Break field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:196
 msgid "Call Recording"
 msgstr "Enregistrement des appels"
 
 #. Label of a Data field in DocType 'TP Conference Participant'
 #. Label of a Data field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:26
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:28
 msgid "Call SID"
 msgstr "Call SID"
 
 #. Description of the 'Duration' (Duration) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:73
 msgid "Call duration in seconds"
 msgstr "Durée de l'appel en secondes"
 
 #. Label of a Data field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:92
 msgid "Called Number"
 msgstr "Numéro appelé"
 
 #. Label of a Link field in DocType 'TP Call Log'
 #. Option for the 'Type' (Select) field in DocType 'TP Conference Participant'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:120
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:34
 msgid "Caller"
 msgstr "Appelant"
 
 #. Label of a Section Break field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:47
 msgid "Caller Information"
 msgstr "Informations sur l'appelant"
 
 #. Label of a Data field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:81
 msgid "Caller Number"
 msgstr "Numéro de l'appelant"
 
 #. Label of a Check field in DocType 'TP Agent Phone Assignment'
-#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json
+#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json:59
 msgid "Can Listen Recordings"
 msgstr "Peut écouter les enregistrements"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "Canceled"
 msgstr "Annulé"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "Completed"
 msgstr "Terminé"
 
 #. Option for the 'Device' (Select) field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:125
 msgid "Computer"
 msgstr "Ordinateur"
 
 #. Label of a Data field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:30
 msgid "Conference Name"
 msgstr "Nom de la conférence"
 
 #. Label of a Data field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:37
 msgid "Conference SID"
 msgstr "SID de la conférence"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Conference
 #. Participant'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:64
 msgid "Connected"
 msgstr "Connecté"
 
 #. Label of a Check field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:162
 msgid "Cost Calculated"
 msgstr "Coût calculé"
 
 #. Label of a Datetime field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:63
 msgid "Created At"
 msgstr "Créé le"
 
 #. Label of a Data field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:150
 msgid "Currency"
 msgstr "Devise"
 
 #. Label of a Select field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:19
 msgid "Day"
 msgstr "Jour"
 
 #. Label of a Select field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:61
 msgid "Default Medium"
 msgstr "Moyen par défaut"
 
 #. Label of a Data field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:175
 msgid "DevOps Report ID"
 msgstr "ID de rapport DevOps"
 
 #. Label of a Select field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:124
 msgid "Device"
 msgstr "Appareil"
 
 #. Label of a Duration field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:77
 msgid "Duration"
 msgstr "Durée"
 
 #. Label of a Int field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:87
 msgid "Duration (seconds)"
 msgstr "Durée (secondes)"
 
 #. Label of a Check field in DocType 'TP Exotel Settings'
 #. Label of a Check field in DocType 'TP Routing Agent'
 #. Label of a Check field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:26
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:42
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:36
 msgid "Enabled"
 msgstr "Activé"
 
 #. Label of a Time field in DocType 'TP Business Hours'
 #. Label of a Datetime field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:40
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:131
 msgid "End Time"
 msgstr "Heure de Fin"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:47
 msgid "Ended"
 msgstr "Terminé"
 
 #. Label of a Datetime field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:69
 msgid "Ended At"
 msgstr "Terminé le"
 
@@ -332,8 +333,9 @@ msgstr "Terminé le"
 #. Option for the 'Default Medium' (Select) field in DocType 'TP Telephony
 #. Agent'
 #. Label of a Check field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:44
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:62
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:135
 msgid "Exotel"
 msgstr "Exotel"
 
@@ -342,7 +344,7 @@ msgid "Exotel Exception"
 msgstr "Exception Exotel"
 
 #. Label of a Data field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:141
 msgid "Exotel Number"
 msgstr "Numéro Exotel"
 
@@ -351,11 +353,12 @@ msgid "Exotel Number Missing"
 msgstr "Numéro Exotel manquant"
 
 #: telephony/exotel/handler.py:99
+#, python-brace-format
 msgid "Exotel Number {0} is not valid"
 msgstr "Le numéro Exotel {0} n'est pas valide"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "Failed"
 msgstr "Échoué"
 
@@ -370,27 +373,27 @@ msgstr "Échec de la mise à jour du statut d'appel Twilio"
 #. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone
 #. Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:104
 msgid "Forward"
 msgstr "Transférer"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Friday"
 msgstr "Vendredi"
 
 #. Label of a Data field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:53
 msgid "Friendly Name"
 msgstr "Nom convivial"
 
 #. Label of a Data field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:62
 msgid "From"
 msgstr "De"
 
 #. Label of a Data field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:53
 msgid "From Number"
 msgstr "Numéro d'origine"
 
@@ -399,41 +402,42 @@ msgstr "Numéro d'origine"
 #. Config'
 #. Option for the 'Outside Hours Action' (Select) field in DocType 'TP Phone
 #. Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:104
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:143
 msgid "Hangup"
 msgstr "Raccrocher"
 
 #. Label of a Datetime field in DocType 'TP Conference Participant'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:85
 msgid "Hold Start"
 msgstr "Début de la mise en attente"
 
 #. Description of the 'Ring Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:73
 msgid "How to ring agents when a call comes in"
 msgstr "Comment faire sonner les agents lors d'un appel entrant"
 
 # no opinion on purpose: repeating the source erases the translation another
 # app ships (neoffice-maintenance#335)
 #. Label of a Data field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:54
 #, fuzzy
 msgid "ID"
 msgstr "ID"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "In Progress"
 msgstr "En cours"
 
 #. Option for the 'Type' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:106
 msgid "Incoming"
 msgstr "Entrant"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "Initiated"
 msgstr "Initié"
 
@@ -454,70 +458,70 @@ msgid "Invalid credentials"
 msgstr "Identifiants invalides"
 
 #. Label of a Check field in DocType 'TP Telephony Phone'
-#: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json
+#: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json:25
 msgid "Is Primary"
 msgstr "Est primaire"
 
 #. Label of a Datetime field in DocType 'TP Conference Participant'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:73
 msgid "Joined At"
 msgstr "Rejoint le"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Conference
 #. Participant'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:64
 msgid "Left"
 msgstr "Gauche"
 
 #. Label of a Datetime field in DocType 'TP Conference Participant'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:79
 msgid "Left At"
 msgstr "Quitté le"
 
 #. Label of a Section Break field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:105
 msgid "Legacy Configuration"
 msgstr "Configuration héritée"
 
 #. Label of a Table field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:184
 msgid "Links"
 msgstr "Liens"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:42
 msgid "Listened"
 msgstr "Écouté"
 
 #. Description of the 'Priority' (Int) field in DocType 'TP Routing Agent'
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:46
 msgid "Lower number = higher priority"
 msgstr "Plus petit numéro = priorité plus haute"
 
 #. Description of the 'Priority' (Int) field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:83
 msgid "Lower number = higher priority in call routing"
 msgstr ""
 "Un nombre plus petit = priorité plus élevée dans l'acheminement des appels"
 
 #. Option for the 'Telephony Medium' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:44
 msgid "Manual"
 msgstr "Manuel"
 
 #. Label of a Int field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:96
 msgid "Max Ring Time (s)"
 msgstr "Durée maximale de sonnerie (s)"
 
 #. Description of the 'Max Ring Time (s)' (Int) field in DocType 'TP Phone
 #. Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:93
 msgid "Maximum total ringing time before no-answer action"
 msgstr "Temps de sonnerie maximum avant action de non-réponse"
 
 #. Label of a Data field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:82
 msgid "Medium"
 msgstr "Moyen"
 
@@ -526,12 +530,13 @@ msgstr "Moyen"
 #. Config'
 #. Option for the 'Outside Hours Action' (Select) field in DocType 'TP Phone
 #. Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:104
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:143
 msgid "Message"
 msgstr "Message"
 
 #. Label of a Data field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:56
 msgid "Mobile No."
 msgstr "N° Mobile."
 
@@ -540,33 +545,34 @@ msgid "Mobile Number Missing"
 msgstr "Numéro de mobile manquant"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Monday"
 msgstr "Lundi"
 
 #. Label of a Data field in DocType 'TP Agent Phone Assignment'
 #. Label of a Data field in DocType 'TP Routing Agent'
-#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
+#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json:29
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:30
 msgid "Name"
 msgstr "Nom"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:42
 msgid "New"
 msgstr "Nouveau"
 
 #: telephony/twilio/api.py:459
+#, python-brace-format
 msgid "New Voicemail from {0}"
 msgstr "Nouveau message vocal de {0}"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "No Answer"
 msgstr "Sans réponse"
 
 #. Label of a Select field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:103
 msgid "No Answer Action"
 msgstr "Action si non-réponse"
 
@@ -578,12 +584,12 @@ msgstr ""
 "redirigés vers la messagerie vocale."
 
 #. Label of a Data field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:182
 msgid "Notification Email"
 msgstr "Email de notification"
 
 #. Label of a Data field in DocType 'TP Telephony Phone'
-#: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json
+#: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json:17
 msgid "Number"
 msgstr "Numéro"
 
@@ -595,55 +601,55 @@ msgstr "Numéro"
 #. Option for the 'Status' (Select) field in DocType 'TP Call Conference'
 #. Option for the 'Status' (Select) field in DocType 'TP Conference
 #. Participant'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:47
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:64
 msgid "On Hold"
 msgstr "En attente"
 
 #. Label of a Data field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:56
 msgid "Original Call SID"
 msgstr "SID de l'appel d'origine"
 
 #. Option for the 'Type' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:106
 msgid "Outgoing"
 msgstr "Sortant"
 
 #. Label of a Select field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:142
 msgid "Outside Hours Action"
 msgstr "Action hors horaires"
 
 #. Label of a Small Text field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:153
 msgid "Outside Hours Message"
 msgstr "Message en dehors des heures d'ouverture"
 
 #. Label of a Section Break field in DocType 'TP Call Conference'
 #. Label of a Table field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:98
 msgid "Participants"
 msgstr "Les Participants"
 
 #. Option for the 'Device' (Select) field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:125
 msgid "Phone"
 msgstr "Téléphone"
 
 #. Label of a Data field in DocType 'TP Agent Phone Assignment'
 #. Label of a Data field in DocType 'TP Conference Participant'
 #. Label of a Data field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json:22
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:51
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:45
 msgid "Phone Number"
 msgstr "Numéro de téléphone"
 
 #. Description of the 'Assigned Numbers' (Table) field in DocType 'TP
 #. Telephony
 #. Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:95
 msgid ""
 "Phone numbers this agent can receive calls from. Configure ring delay per "
 "number."
@@ -659,8 +665,8 @@ msgstr "Veuillez configurer les heures d'ouverture ou désactiver l'option"
 msgid "Please enable twilio to proceed."
 msgstr "Veuillez activer Twilio pour continuer."
 
-#: telephony/twilio/api.py:236 telephony/twilio/api.py:317
-#: telephony/twilio/twilio_handler.py:568
+#: telephony/twilio/api.py:237 telephony/twilio/api.py:318
+#: telephony/twilio/twilio_handler.py:569
 msgid "Please leave a message after the tone."
 msgstr "Veuillez laisser un message après le signal sonore."
 
@@ -669,111 +675,111 @@ msgid "Please setup Exotel intergration"
 msgstr "Veuillez configurer l'intégration Exotel"
 
 #. Label of a Check field in DocType 'TP Agent Phone Assignment'
-#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json
+#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json:40
 msgid "Primary"
 msgstr "Principal"
 
 #. Label of a Int field in DocType 'TP Routing Agent'
 #. Label of a Int field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:50
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:86
 msgid "Priority"
 msgstr "Priorité"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "Queued"
 msgstr "Dans la file d'attente"
 
 #. Label of a Check field in DocType 'TP Phone Number Config'
 #. Label of a Check field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:202
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:47
 msgid "Record Calls"
 msgstr "Enregistrer les appels"
 
 #. Label of a Check field in DocType 'TP Exotel Settings'
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:37
 msgid "Record Outgoing Calls"
 msgstr "Enregistrer les appels sortants"
 
 #. Label of a Section Break field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:70
 msgid "Recording"
 msgstr "Enregistrement"
 
 #. Label of a Select field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:210
 msgid "Recording Mode"
 msgstr "Mode d'enregistrement"
 
 #. Label of a Data field in DocType 'TP Call Log'
 #. Label of a Data field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:126
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:75
 msgid "Recording URL"
 msgstr "URL d'enregistrement"
 
 #. Label of a Check field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:169
 msgid "Reported to DevOps"
 msgstr "Signalé à DevOps"
 
 #. Label of a Int field in DocType 'TP Agent Phone Assignment'
 #. Label of a Int field in DocType 'TP Routing Agent'
-#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
+#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json:48
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:58
 msgid "Ring Delay (s)"
 msgstr "Délai (s)"
 
 #. Label of a Select field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:77
 msgid "Ring Mode"
 msgstr "Mode de sonnerie"
 
 #. Label of a Int field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:85
 msgid "Ring Timeout (s)"
 msgstr "Délai d'expiration de la sonnerie (s)"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
 #. Option for the 'Status' (Select) field in DocType 'TP Conference
 #. Participant'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:64
 msgid "Ringing"
 msgstr "Sonnerie"
 
 #. Option for the 'Ring Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:78
 msgid "Round Robin"
 msgstr "Tourniquet"
 
 #. Label of a Section Break field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:109
 msgid "Routing Agents"
 msgstr "Agents de routage"
 
 #. Label of a Section Break field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:69
 msgid "Routing Configuration"
 msgstr "Configuration du routage"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Saturday"
 msgstr "Samedi"
 
 #. Description of the 'Ring Timeout (s)' (Int) field in DocType 'TP Phone
 #. Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:82
 msgid "Seconds to ring each agent in sequential mode"
 msgstr "Secondes de sonnerie pour chaque agent en mode séquentiel"
 
 #. Description of the 'Ring Delay (s)' (Int) field in DocType 'TP Routing
 #. Agent'
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:54
 msgid "Seconds to wait before ringing this agent (for sequential mode)"
 msgstr ""
 "Secondes à attendre avant de faire sonner cet agent (pour le mode "
@@ -781,32 +787,32 @@ msgstr ""
 
 #. Description of the 'Ring Delay (s)' (Int) field in DocType 'TP Agent Phone
 #. Assignment'
-#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json
+#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json:44
 msgid "Seconds to wait before ringing this agent for this number"
 msgstr "Secondes à attendre avant de faire sonner cet agent pour ce numéro"
 
 #. Description of the 'Notification Email' (Data) field in DocType 'TP Phone
 #. Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:179
 msgid "Send voicemail notification to this email"
 msgstr "Envoyer la notification de message vocal à cet e-mail"
 
 #. Option for the 'Ring Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:78
 msgid "Sequential"
 msgstr "Séquentiel"
 
 #. Option for the 'Ring Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:78
 msgid "Simultaneous"
 msgstr "Simultané"
 
 #. Label of a Time field in DocType 'TP Business Hours'
 #. Label of a Datetime field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:32
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:87
 msgid "Start Time"
 msgstr "Heure de début"
 
@@ -815,117 +821,117 @@ msgstr "Heure de début"
 #. Label of a Section Break field in DocType 'TP Conference Participant'
 #. Label of a Select field in DocType 'TP Conference Participant'
 #. Label of a Select field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:46
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:68
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:56
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:41
 msgid "Status"
 msgstr "Statut"
 
 #. Label of a Data field in DocType 'TP Exotel Settings'
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:55
 msgid "Subdomain"
 msgstr "Sous-domaine"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Sunday"
 msgstr "Dimanche"
 
 #. Name of a role
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:124
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:205
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:111
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:242
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:162
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:139
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:120
 msgid "System Manager"
 msgstr "Administrateur système"
 
 #. Name of a role
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:217
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:174
 msgid "TP Agent"
 msgstr "TP Agent"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json
+#: telephony/ftelephony/doctype/tp_agent_phone_assignment/tp_agent_phone_assignment.json:68
 msgid "TP Agent Phone Assignment"
 msgstr "TP Agent Phone Assignment"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:50
 msgid "TP Business Hours"
 msgstr "TP Business Hours"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:112
 msgid "TP Call Conference"
 msgstr "TP Call Conference"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:193
 msgid "TP Call Log"
 msgstr "TP Call Log"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:95
 msgid "TP Conference Participant"
 msgstr "TP Conference Participant"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:102
 msgid "TP Exotel Settings"
 msgstr "TP Exotel Settings"
 
 #. Name of a role
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:229
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:121
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:254
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:186
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:149
 msgid "TP Manager"
 msgstr "TP Manager"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:230
 msgid "TP Phone Number Config"
 msgstr "TP Phone Number Config"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json
+#: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:67
 msgid "TP Routing Agent"
 msgstr "TP Routing Agent"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:150
 msgid "TP Telephony Agent"
 msgstr "TP Telephony Agent"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json
+#: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json:34
 msgid "TP Telephony Phone"
 msgstr "TP Telephony Phone"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:130
 msgid "TP Twilio Settings"
 msgstr "TP Twilio Settings"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:108
 msgid "TP Voicemail"
 msgstr "TP Voicemail"
 
 #. Label of a Select field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:43
 msgid "Telephony Medium"
 msgstr "Moyen de téléphonie"
 
 #. Name of a role
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:134
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:130
 msgid "Telephony User"
 msgstr "Telephony User"
 
@@ -934,53 +940,53 @@ msgid "Thank you. Goodbye."
 msgstr "Merci. Au revoir."
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Thursday"
 msgstr "Jeudi"
 
 #. Label of a Data field in DocType 'TP Call Log'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:98
 msgid "To"
 msgstr "Vers"
 
 #. Label of a Data field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:64
 msgid "To Number"
 msgstr "Vers le numéro"
 
 #. Label of a Check field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:190
 msgid "Transcribe Voicemail"
 msgstr "Transcrire les messages vocaux"
 
 #. Label of a Section Break field in DocType 'TP Voicemail'
 #. Label of a Small Text field in DocType 'TP Voicemail'
-#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json
+#: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:94
 msgid "Transcription"
 msgstr "Transcription"
 
 #. Option for the 'Type' (Select) field in DocType 'TP Conference Participant'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:34
 msgid "Transfer Target"
 msgstr "Cible de transfert"
 
 #. Option for the 'Status' (Select) field in DocType 'TP Call Conference'
-#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json
+#: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:47
 msgid "Transferring"
 msgstr "Transfert en cours"
 
 #. Label of a Check field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:222
 msgid "Trim Silence"
 msgstr "Supprimer les silences"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Tuesday"
 msgstr "Mardi"
 
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:91
 msgid "TwiML SID"
 msgstr "SID TwiML"
 
@@ -988,8 +994,9 @@ msgstr "SID TwiML"
 #. Option for the 'Default Medium' (Select) field in DocType 'TP Telephony
 #. Agent'
 #. Label of a Check field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:44
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:62
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:111
 msgid "Twilio"
 msgstr "Twilio"
 
@@ -999,19 +1006,19 @@ msgid "Twilio API credential creation error."
 msgstr "Erreur de création des identifiants API Twilio."
 
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:121
 msgid "Twilio Apps"
 msgstr "Applications Twilio"
 
 #. Label of a Data field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:117
 msgid "Twilio Number"
 msgstr "Numéro Twilio"
 
 #. Label of a Select field in DocType 'TP Call Log'
 #. Label of a Select field in DocType 'TP Conference Participant'
-#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
+#: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:105
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:33
 msgid "Type"
 msgstr "Type"
 
@@ -1020,19 +1027,19 @@ msgid "Unauthorized request"
 msgstr "Requête non autorisée"
 
 #. Label of a Check field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:128
 msgid "Use Business Hours"
 msgstr "Utiliser les heures d'ouverture"
 
 #. Label of a Link field in DocType 'TP Conference Participant'
 #. Label of a Link field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:44
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:34
 msgid "User"
 msgstr "Utilisateur"
 
 #. Label of a Data field in DocType 'TP Telephony Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:45
 msgid "User Name"
 msgstr "Nom d'utilisateur"
 
@@ -1042,45 +1049,47 @@ msgstr "Nom d'utilisateur"
 #. Option for the 'Outside Hours Action' (Select) field in DocType 'TP Phone
 #. Number Config'
 #. Label of a Section Break field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:104
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:143
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:159
 msgid "Voicemail"
 msgstr "Messagerie vocale"
 
 #. Label of a Check field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:165
 msgid "Voicemail Enabled"
 msgstr "Messagerie vocale activée"
 
 #. Label of a Small Text field in DocType 'TP Phone Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:171
 msgid "Voicemail Greeting"
 msgstr "Message d'accueil"
 
-#: telephony/twilio/twilio_handler.py:528
+#: telephony/twilio/twilio_handler.py:529
 msgid "We are currently closed. Please call back during business hours."
 msgstr ""
 "Nous sommes actuellement fermés. Veuillez rappeler pendant nos heures "
 "d'ouverture."
 
 #. Label of a Data field in DocType 'TP Exotel Settings'
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:66
 msgid "Webhook Verify Token"
 msgstr "Jeton de vérification du webhook"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
-#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json
+#: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Wednesday"
 msgstr "Mercredi"
 
 #. Description of the 'No Answer Action' (Select) field in DocType 'TP Phone
 #. Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:100
 msgid "What to do if no agent answers"
 msgstr "Que faire si aucun agent ne répond"
 
 #. Description of the 'Available' (Check) field in DocType 'TP Telephony
 #. Agent'
-#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json
+#: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:71
 msgid "When unchecked, this agent will not receive incoming calls"
 msgstr ""
 "Si cette case est décochée, cet agent ne recevra pas d'appels entrants"
@@ -1097,24 +1106,24 @@ msgstr ""
 
 #. Option for the 'Recording Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:211
 msgid "dual"
 msgstr "dual"
 
 #. Description of the 'Recording Mode' (Select) field in DocType 'TP Phone
 #. Number Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:207
 msgid "dual = both sides, record-from-answer-dual = from answer"
 msgstr "dual = les deux canaux, record-from-answer-dual = depuis la réponse"
 
 #. Option for the 'Recording Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:211
 msgid "record-from-answer-dual"
 msgstr "record-from-answer-dual"
 
 #. Option for the 'Recording Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
-#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json
+#: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:211
 msgid "record-from-ringing-dual"
 msgstr "record-from-ringing-dual"
