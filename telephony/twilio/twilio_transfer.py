@@ -1,5 +1,7 @@
 # Copyright (c) 2026, Frappe Technologies Pvt. Ltd. and contributors
 # For license information, please see license.txt
+# //// Neoffice — added file (no upstream equivalent): call transfer for the softphone of neoffice_theme and the
+# mobile app.
 
 """
 Twilio Call Transfer API
@@ -12,9 +14,39 @@ import frappe
 from frappe import _
 
 from .twilio_handler import Twilio
+from telephony.access import check_telephony_user, is_telephony_manager
 from telephony.ftelephony.doctype.tp_call_conference.tp_call_conference import (
     get_active_conference_by_call_sid,
 )
+
+
+def _check_on_the_call(conf_doc) -> None:
+    """Refuse an account that is not on this call.
+
+    These methods act on a live call: they hang up the agent, hold the caller, dial a number into it, and
+    get_conference_status reads its numbers. They answer the people on the call (a participant row names its
+    user) and the telephony managers; any other signed-in account was able to act on any call it could name
+    (neoffice-maintenance#2296). Checked before the try blocks below, so a refusal is a 403, not an Error Log row.
+    """
+    if not conf_doc or is_telephony_manager():
+        return
+    user = frappe.session.user
+    if not any(p.user == user for p in conf_doc.participants):
+        frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+
+def _conference_of(call_sid: str | None = None, conference_name: str | None = None):
+    """The conference a call or a name points to, refused when the session user is not on it."""
+    if conference_name:
+        conf_doc = (
+            frappe.get_doc("TP Call Conference", conference_name)
+            if frappe.db.exists("TP Call Conference", conference_name)
+            else None
+        )
+    else:
+        conf_doc = get_active_conference_by_call_sid(call_sid) if call_sid else None
+    _check_on_the_call(conf_doc)
+    return conf_doc
 
 
 @frappe.whitelist()
@@ -28,13 +60,12 @@ def get_conference_status(call_sid: str = None, conference_name: str = None):
     Returns:
         dict with conference info and participants
     """
+    conf_doc = _conference_of(call_sid, conference_name)  # //// Neoffice — the people on the call, see _check_on_the_call
     try:
         if conference_name:
-            if not frappe.db.exists("TP Call Conference", conference_name):
+            if not conf_doc:
                 return {"ok": False, "error": "Conference not found"}
-            conf_doc = frappe.get_doc("TP Call Conference", conference_name)
         elif call_sid:
-            conf_doc = get_active_conference_by_call_sid(call_sid)
             if not conf_doc:
                 return {"ok": False, "error": "No active conference found for this call"}
         else:
@@ -85,9 +116,9 @@ def cold_transfer(call_sid: str, transfer_to: str, transfer_type: str = "user"):
     Returns:
         dict with success status
     """
+    conf_doc = _conference_of(call_sid)  # //// Neoffice — the people on the call, see _check_on_the_call
     try:
         # Find the active conference
-        conf_doc = get_active_conference_by_call_sid(call_sid)
         if not conf_doc:
             return {"ok": False, "error": "No active conference found"}
 
@@ -206,9 +237,9 @@ def warm_transfer_initiate(call_sid: str, transfer_to: str, transfer_type: str =
     Returns:
         dict with transfer_call_sid to track the new call
     """
+    conf_doc = _conference_of(call_sid)  # //// Neoffice — the people on the call, see _check_on_the_call
     try:
         # Find the active conference
-        conf_doc = get_active_conference_by_call_sid(call_sid)
         if not conf_doc:
             return {"ok": False, "error": "No active conference found"}
 
@@ -325,8 +356,8 @@ def warm_transfer_complete(call_sid: str):
     Returns:
         dict with success status
     """
+    conf_doc = _conference_of(call_sid)  # //// Neoffice — the people on the call, see _check_on_the_call
     try:
-        conf_doc = get_active_conference_by_call_sid(call_sid)
         if not conf_doc:
             return {"ok": False, "error": "No active conference found"}
 
@@ -379,8 +410,8 @@ def warm_transfer_cancel(call_sid: str):
     Returns:
         dict with success status
     """
+    conf_doc = _conference_of(call_sid)  # //// Neoffice — the people on the call, see _check_on_the_call
     try:
-        conf_doc = get_active_conference_by_call_sid(call_sid)
         if not conf_doc:
             return {"ok": False, "error": "No active conference found"}
 
@@ -429,8 +460,8 @@ def hold_call(call_sid: str, hold: bool = True):
     Returns:
         dict with success status
     """
+    conf_doc = _conference_of(call_sid)  # //// Neoffice — the people on the call, see _check_on_the_call
     try:
-        conf_doc = get_active_conference_by_call_sid(call_sid)
         if not conf_doc:
             return {"ok": False, "error": "No active conference found"}
 
@@ -480,6 +511,9 @@ def get_available_transfer_targets():
     Returns:
         list of users with their availability status
     """
+    # //// Neoffice — the colleagues' names and mobile numbers: for the staff who take calls, not for every
+    # signed-in account (neoffice-maintenance#2296).
+    check_telephony_user()
     try:
         # Get all telephony agents
         agents = frappe.get_all(

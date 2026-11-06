@@ -11,6 +11,7 @@
   "enabled",
   "column_break_avmt",
   "record_calls",
+  "webhook_signature_check",
   "section_break_eklq",
   "account_sid",
   "column_break_yqvr",
@@ -45,6 +46,15 @@
    "fieldname": "record_calls",
    "fieldtype": "Check",
    "label": "Record Calls"
+  },
+  {
+   "default": "Observe",
+   "depends_on": "enabled",
+   "description": "Twilio signs every webhook request. Observe serves a request that does not verify and records it in the Error Log; Enforce refuses it. Switch to Enforce once a real call left no mismatch in the Error Log.",
+   "fieldname": "webhook_signature_check",
+   "fieldtype": "Select",
+   "label": "Webhook Signature Check",
+   "options": "Observe\nEnforce\nOff"
   },
   {
    "fieldname": "section_break_eklq",
@@ -124,7 +134,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-09-16 16:09:35.057408",
+ "modified": "2026-11-06 16:00:00.000000",
  "modified_by": "Administrator",
  "module": "FTelephony",
  "name": "TP Twilio Settings",

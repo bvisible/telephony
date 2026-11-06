@@ -670,7 +670,8 @@ class TwilioCallDetails:
         self._call_to = call_to or call_info.get("To")
 
     def get_direction(self):
-        if self.call_info.get("Caller").lower().startswith("client"):
+        # //// Neoffice — a request with no Caller died here with a 500 and an Error Log row each time.
+        if (self.call_info.get("Caller") or "").lower().startswith("client"):
             return "Outgoing"
         return "Incoming"
 

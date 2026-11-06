@@ -1,10 +1,18 @@
+# //// Neoffice — hmac: the webhook key compared in constant time; quote: the key put in a URL as data.
+import hmac
+from urllib.parse import quote
+
 import bleach
 import frappe
 import requests
 from frappe import _
 from frappe.integrations.utils import create_request_log
 
+# //// Neoffice — who may place a call, and a bound on every request to Exotel (neoffice-maintenance#2296).
+from telephony.access import is_telephony_manager
 from telephony.utils import link_call_with_contact, link_call_with_doc
+
+EXOTEL_TIMEOUT = 15  # //// Neoffice — seconds: a host that never answered held a web worker for good
 
 # Endpoints for webhook
 
@@ -17,6 +25,7 @@ from telephony.utils import link_call_with_contact, link_call_with_doc
 
 
 # Incoming Call
+# permission-check: ok Exotel webhook (guest): validate_request checks its key
 @frappe.whitelist(allow_guest=True)
 def handle_request(**kwargs):
     validate_request()
@@ -39,7 +48,9 @@ def handle_request(**kwargs):
 
         call_payload = kwargs
 
-        frappe.publish_realtime("exotel_call", call_payload)  # nosemgrep
+        # //// Neoffice — upstream sent every call, numbers and recording included, to every desk user (no room):
+        # it goes to the agents of the call now, and never with the webhook key (neoffice-maintenance#2296).
+        _publish_call_event(call_payload)
         status = call_payload.get("Status")
         if status == "free":
             return
@@ -67,14 +78,23 @@ def handle_request(**kwargs):
 
 
 # Outgoing Call
-@frappe.whitelist()
-def make_a_call(
-    to_number, from_number=None, caller_id=None, link_doctype=None, link_docname=None
+# //// Neoffice — upstream let any signed-in account place a call billed to the company, between two numbers of
+# its choice, and a GET from another site could do it in a desk user's name (neoffice-maintenance#2296). The
+# call is placed by a POST, from the caller's own agent line (their mobile number and Exotel number), and
+# only a telephony manager may give other numbers; the document a call is filed on is one the caller may read.
+@frappe.whitelist(methods=["POST"])
+def make_a_call(  # //// Neoffice — the parameters are text, see above
+    to_number: str,
+    from_number: str | None = None,
+    caller_id: str | None = None,
+    link_doctype: str | None = None,
+    link_docname: str | None = None,
 ):
     if not is_integration_enabled():
         frappe.throw(
             _("Please setup Exotel intergration"), title=_("Integration Not Enabled")
         )
+    _check_outgoing_call(from_number, caller_id, link_doctype, link_docname)  # //// Neoffice — see above
 
     endpoint = get_exotel_endpoint("Calls/connect.json?details=true")
 
@@ -120,6 +140,7 @@ def make_a_call(
                 "StatusCallbackEvents[0]": "terminal",
                 "StatusCallbackEvents[1]": "answered",
             },
+            timeout=EXOTEL_TIMEOUT,  # //// Neoffice — see EXOTEL_TIMEOUT
         )
         response.raise_for_status()
     except requests.exceptions.HTTPError:
@@ -160,7 +181,7 @@ def get_exotel_endpoint(action=None, version="v1"):
 
 def get_all_exophones():
     endpoint = get_exotel_endpoint("IncomingPhoneNumbers", "v2_beta")
-    response = requests.get(endpoint)
+    response = requests.get(endpoint, timeout=EXOTEL_TIMEOUT)  # //// Neoffice — see EXOTEL_TIMEOUT
     return [
         phone.get("friendly_name")
         for phone in response.json().get("incoming_phone_numbers", [])
@@ -170,11 +191,12 @@ def get_all_exophones():
 def get_status_updater_url():
     from frappe.utils.data import get_url
 
-    webhook_verify_token = frappe.db.get_single_value(
-        "TP Exotel Settings", "webhook_verify_token"
-    )
+    # //// Neoffice — the token is a Password field now (patch encrypt_telephony_settings_secrets): read through
+    # get_password, which also returns a value the patch has not moved yet.
+    webhook_verify_token = get_webhook_verify_token()
     return get_url(
-        f"api/method/telephony.exotel.handler.handle_request?key={webhook_verify_token}"
+        # //// Neoffice — the key is quoted: a character of the URL syntax in it cut the URL short.
+        f"api/method/telephony.exotel.handler.handle_request?key={quote(webhook_verify_token or '', safe='')}"
     )
 
 
@@ -185,14 +207,64 @@ def get_exotel_settings():
 def validate_request():
     # workaround security since exotel does not support request signature
     # /api/method/<exotel-integration-method>?key=<exotel-webhook=verify-token>
-    webhook_verify_token = frappe.db.get_single_value(
-        "TP Exotel Settings", "webhook_verify_token"
-    )
+    # //// Neoffice — the token is read through get_password (a Password field now) and compared in constant time.
+    webhook_verify_token = get_webhook_verify_token()
     key = frappe.request.args.get("key")
-    is_valid = key and key == webhook_verify_token
+    is_valid = bool(
+        key
+        and webhook_verify_token
+        and hmac.compare_digest(key.encode(), webhook_verify_token.encode())
+    )
 
     if not is_valid:
         frappe.throw(_("Unauthorized request"), exc=frappe.PermissionError)
+
+
+# //// Neoffice — see validate_request.
+def get_webhook_verify_token() -> str | None:
+    return get_exotel_settings().get_password("webhook_verify_token", raise_exception=False)
+
+
+# //// Neoffice — see make_a_call.
+def _check_outgoing_call(from_number, caller_id, link_doctype, link_docname) -> None:
+    if not is_telephony_manager():
+        agent = frappe.db.get_value(
+            "TP Telephony Agent",
+            {"user": frappe.session.user},
+            ["mobile_no", "exotel", "exotel_number"],
+            as_dict=True,
+        )
+        if not agent or not agent.exotel:
+            frappe.throw(_("Not permitted"), frappe.PermissionError)
+        if (from_number and from_number != agent.mobile_no) or (
+            caller_id and caller_id != agent.exotel_number
+        ):
+            frappe.throw(
+                _("Only a telephony manager may place a call from another number"),
+                frappe.PermissionError,
+            )
+    if link_doctype and link_docname:
+        if not frappe.db.exists(link_doctype, link_docname) or not frappe.has_permission(
+            link_doctype, "read", link_docname
+        ):
+            frappe.throw(_("Not permitted"), frappe.PermissionError)
+
+
+# //// Neoffice — see handle_request: the agents of the call, or the Exotel agents when the event names none.
+def _publish_call_event(call_payload) -> None:
+    payload = {key: value for key, value in call_payload.items() if key != "key"}
+    users = {payload.get("AgentEmail")} - {None, ""}
+    call_id = payload.get("CallSid")
+    if not users and isinstance(call_id, str) and call_id:
+        users = set(
+            frappe.db.get_value("TP Call Log", call_id, ["caller", "receiver"]) or []
+        ) - {None, ""}
+    if not users:
+        users = set(
+            frappe.get_all("TP Telephony Agent", filters={"exotel": 1}, pluck="user")
+        ) - {None, ""}
+    for user in users:
+        frappe.publish_realtime("exotel_call", payload, user=user)  # nosemgrep
 
 
 @frappe.whitelist()
@@ -238,7 +310,8 @@ def create_call_log(
 
 def get_call_log(call_payload):
     call_log_id = call_payload.get("CallSid")
-    if frappe.db.exists("TP Call Log", call_log_id):
+    # //// Neoffice — the key of a call log is text: a list or a dict from a JSON body would be a filter.
+    if isinstance(call_log_id, str) and frappe.db.exists("TP Call Log", call_log_id):
         return frappe.get_doc("TP Call Log", call_log_id)
 
 

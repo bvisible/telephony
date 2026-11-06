@@ -4,3 +4,7 @@
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+# //// Neoffice — the telephony secrets out of tabSingles and the Versions, and the voicemail transcriptions as text
+# (neoffice-maintenance#2296)
+telephony.patches.v15_0.encrypt_telephony_settings_secrets
+telephony.patches.v15_0.escape_voicemail_transcriptions

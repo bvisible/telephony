@@ -2,8 +2,14 @@ import json
 
 import frappe
 from frappe import _
+
+# //// Neoffice — the request signature check below (upstream develop checks it too, and refuses always).
+from frappe.utils import escape_html, get_host_name_from_request, get_url
+from twilio.request_validator import RequestValidator
 from werkzeug.wrappers import Response
 
+# //// Neoffice — the maintenance methods are the managers' (neoffice-maintenance#2296).
+from telephony.access import check_telephony_manager
 from telephony.utils import link_call_with_contact, link_call_with_doc
 
 from .twilio_handler import IncomingCall, Twilio, TwilioCallDetails
@@ -12,6 +18,111 @@ from .twilio_handler import IncomingCall, Twilio, TwilioCallDetails
 @frappe.whitelist()
 def is_enabled():
     return frappe.db.get_single_value("TP Twilio Settings", "enabled")
+
+
+# //// Neoffice — Twilio signs every webhook with the account's auth token (X-Twilio-Signature), over the URL it
+# called and the POST parameters. The webhooks below did not check it, so their events could come from anyone
+# (neoffice-maintenance#2296). Upstream now refuses every request that does not verify; behind
+# our proxies the URL Twilio signed may not be the one rebuilt here, and a wrong check refuses every incoming call
+# (#2276), which only a real call can rule out. So the check has three states, in TP Twilio Settings (Webhook
+# signature check): Off, Observe (a mismatch is logged, never refused: the default, also when the field is empty)
+# and Enforce (a mismatch is refused). Switch to Enforce once a real call left no mismatch in the Error Log.
+SIGNATURE_CHECK_OFF = "Off"
+SIGNATURE_CHECK_OBSERVE = "Observe"
+SIGNATURE_CHECK_ENFORCE = "Enforce"
+# One Error Log row per webhook in this window, the others in the twilio log file: a forged request must not
+# write a row each time.
+SIGNATURE_MISMATCH_LOG_EVERY = 600
+
+
+def validate_twilio_request(webhook: str | None = None) -> None:
+    """Checks the Twilio signature of the request, as TP Twilio Settings says (Off, Observe, Enforce).
+
+    `webhook` names the method in the log; upstream calls this with no argument, so it defaults to the path's.
+    """
+    webhook = webhook or frappe.request.path.rsplit(".", 1)[-1]
+    settings = frappe.get_cached_doc("TP Twilio Settings")
+    mode = settings.get("webhook_signature_check") or SIGNATURE_CHECK_OBSERVE
+    if mode == SIGNATURE_CHECK_OFF:
+        return
+    reason = twilio_signature_mismatch(settings)
+    if not reason:
+        return
+    if mode == SIGNATURE_CHECK_ENFORCE:
+        frappe.throw(_("Invalid Twilio request signature"), frappe.PermissionError)
+    _note_signature_mismatch(webhook, reason)
+
+
+def twilio_signature_mismatch(settings) -> str | None:
+    """None when the request is signed for a URL it may have been sent to; otherwise why it is not."""
+    auth_token = settings.enabled and settings.get_password("auth_token", raise_exception=False)
+    if not auth_token:
+        return "Twilio is not enabled or has no auth token"
+    signature = frappe.get_request_header("X-Twilio-Signature") or ""
+    if not signature:
+        return "no X-Twilio-Signature header"
+    validator = RequestValidator(auth_token)
+    # Twilio signs the URL plus the POST parameters; on a GET the parameters are in the URL already.
+    params = frappe.request.form if frappe.request.method == "POST" else {}
+    if any(validator.validate(url, params, signature) for url in get_request_urls()):
+        return None
+    return "signature does not match"
+
+
+def get_request_urls() -> list[str]:
+    """The URLs Twilio may have called for this request: the one it signs is among them.
+
+    Behind nginx the request carries the host Twilio called (Host) and its scheme (X-Forwarded-Proto); the
+    callback URLs this app gives Twilio are built on the site's host_name (get_public_url). Both are tried, with
+    the path as received and as rebuilt; RequestValidator tries each with and without the port.
+    """
+    request = frappe.request
+    query = request.query_string.decode()
+    paths = [request.path + (f"?{query}" if query else "")]
+    raw = request.environ.get("RAW_URI") or request.environ.get("REQUEST_URI")
+    if raw and raw not in paths:
+        paths.append(raw)
+
+    bases = []
+    from_request = get_host_name_from_request()
+    if from_request:
+        bases.append(from_request)
+        host = from_request.split("://", 1)[-1]
+        bases.extend(f"{scheme}://{host}" for scheme in ("https", "http"))
+    bases.append(get_url().split(":8", 1)[0])
+
+    urls = []
+    for base in bases:
+        for path in paths:
+            url = base.rstrip("/") + path
+            if url not in urls:
+                urls.append(url)
+    return urls
+
+
+def _note_signature_mismatch(webhook: str, reason: str) -> None:
+    frappe.logger("twilio").warning(f"{webhook}: Twilio signature check failed ({reason})")
+    cache_key = f"telephony:twilio_signature_mismatch:{webhook}"
+    if frappe.cache().get_value(cache_key):
+        return
+    frappe.cache().set_value(cache_key, 1, expires_in_sec=SIGNATURE_MISMATCH_LOG_EVERY)
+    lines = [
+        f"Webhook: {webhook}",
+        f"Reason: {reason}",
+        f"Method: {frappe.request.method}",
+        "URLs tried:",
+        *(f"  {url}" for url in get_request_urls()),
+        f"Parameters received (names only): {', '.join(sorted(frappe.request.form.keys()))}",
+        "Observe mode: the request was served. Later mismatches of this webhook in the next "
+        f"{SIGNATURE_MISMATCH_LOG_EVERY // 60} minutes are in the twilio log file only.",
+    ]
+    frappe.log_error(f"Twilio webhook signature mismatch: {webhook}"[:140], "\n".join(lines))
+
+
+def _webhook_args(kwargs) -> frappe._dict:
+    """The form fields Twilio posted. Twilio posts text only: a list or a dict can only come from a JSON body
+    written by someone else, and the queries below would read it as a filter."""
+    return frappe._dict({key: value for key, value in kwargs.items() if isinstance(value, str)})
 
 
 @frappe.whitelist()
@@ -37,22 +148,25 @@ def generate_access_token():
     return {"token": token}
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def voice(**kwargs):
     """This is a webhook called by twilio to get instructions when the voice call request comes to twilio server."""
+    validate_twilio_request("voice")  # //// Neoffice — see validate_twilio_request
 
     def _get_caller_number(caller):
         identity = caller.replace("client:", "").strip()
         user = Twilio.emailid_from_identity(identity)
         return frappe.db.get_value("TP Telephony Agent", user, "twilio_number")
 
-    args = frappe._dict(kwargs)
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
     twilio = Twilio.connect()
     if not twilio:
         return
 
-    assert args.AccountSid == twilio.account_sid
-    assert args.ApplicationSid == twilio.application_sid
+    # //// Neoffice — refused as a 403: the asserts gave a 500, which writes an Error Log row per forged request.
+    if args.AccountSid != twilio.account_sid or args.ApplicationSid != twilio.application_sid:
+        frappe.throw(_("Invalid Twilio request"), frappe.PermissionError)
 
     # Generate TwiML instructions to make a call
     from_number = _get_caller_number(args.Caller)
@@ -66,9 +180,11 @@ def voice(**kwargs):
     return Response(resp.to_xml(), mimetype="text/xml")
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def twilio_incoming_call_handler(**kwargs):
-    args = frappe._dict(kwargs)
+    validate_twilio_request("twilio_incoming_call_handler")  # //// Neoffice — see validate_twilio_request
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
     call_details = TwilioCallDetails(args)
     create_call_log(call_details)
 
@@ -146,23 +262,34 @@ def update_call_log(call_sid, status=None):
     return
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def update_recording_info(**kwargs):
+    validate_twilio_request("update_recording_info")  # //// Neoffice — see validate_twilio_request
     try:
-        args = frappe._dict(kwargs)
+        args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
         recording_url = args.RecordingUrl
         call_sid = args.CallSid
+        # //// Neoffice — no call id: set_value would write the Single path, not a call log.
+        if not call_sid:
+            return
         update_call_log(call_sid)
         frappe.db.set_value("TP Call Log", call_sid, "recording_url", recording_url)
     except Exception:
         frappe.log_error(title=_("Failed to capture Twilio recording"))
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def update_call_status_info(**kwargs):
+    validate_twilio_request("update_call_status_info")  # //// Neoffice — see validate_twilio_request
     try:
-        args = frappe._dict(kwargs)
+        args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
         parent_call_sid = args.ParentCallSid
+        # //// Neoffice — nothing to update without a call or with Twilio off: the client call below failed and
+        # wrote an Error Log row for each such request (neoffice-maintenance#2296).
+        if not parent_call_sid or not frappe.db.get_single_value("TP Twilio Settings", "enabled"):
+            return
         update_call_log(parent_call_sid, status=args.CallStatus)
 
         call_info = {
@@ -198,6 +325,7 @@ def get_datetime_from_timestamp(timestamp):
 
 @frappe.whitelist()
 def fetch_applications():
+    check_telephony_manager()  # //// Neoffice — it rewrites the settings: the managers' (neoffice-maintenance#2296)
     twilio = Twilio.get_twilio_client()
     applications = [app.friendly_name for app in twilio.applications.list()]
     frappe.db.set_single_value(
@@ -208,12 +336,14 @@ def fetch_applications():
     return applications
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def handle_dial_status(**kwargs):
     """Handle dial completion callback - used when no one answers."""
     from twilio.twiml.voice_response import VoiceResponse
 
-    args = frappe._dict(kwargs)
+    validate_twilio_request("handle_dial_status")  # //// Neoffice — see validate_twilio_request
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
     dial_status = args.DialCallStatus
 
     resp = VoiceResponse()
@@ -268,12 +398,15 @@ def handle_dial_status(**kwargs):
     return Response(resp.to_xml(), mimetype="text/xml")
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def handle_sequential_dial(**kwargs):
     """Handle sequential dial callback - move to next agent if no answer."""
     from twilio.twiml.voice_response import VoiceResponse, Dial
 
-    args = frappe._dict(kwargs)
+    # //// Neoffice — see validate_twilio_request: the answer names the agents' numbers.
+    validate_twilio_request("handle_sequential_dial")
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
     dial_status = args.DialCallStatus
 
     resp = VoiceResponse()
@@ -372,12 +505,14 @@ def handle_sequential_dial(**kwargs):
     return Response(resp.to_xml(), mimetype="text/xml")
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def handle_voicemail(**kwargs):
     """Handle voicemail recording completion."""
     from twilio.twiml.voice_response import VoiceResponse
 
-    args = frappe._dict(kwargs)
+    validate_twilio_request("handle_voicemail")  # //// Neoffice — see validate_twilio_request
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
 
     # Save voicemail info
     try:
@@ -427,17 +562,21 @@ def handle_voicemail(**kwargs):
     return Response(resp.to_xml(), mimetype="text/xml")
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def handle_voicemail_transcription(**kwargs):
     """Handle voicemail transcription callback."""
-    args = frappe._dict(kwargs)
+    validate_twilio_request("handle_voicemail_transcription")  # //// Neoffice — see validate_twilio_request
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
 
     try:
         call_sid = args.CallSid
-        transcription_text = args.TranscriptionText
+        # //// Neoffice — stored as text: the voicemail form shows this field as HTML, and a request from a
+        # signed-in account skips the sanitizer guests get (neoffice-maintenance#2296).
+        transcription_text = escape_html(args.TranscriptionText) if args.TranscriptionText else None
         transcription_status = args.TranscriptionStatus
 
-        if transcription_status == "completed" and transcription_text:
+        if call_sid and transcription_status == "completed" and transcription_text:  # //// Neoffice — a call id
             # Update voicemail record with transcription
             voicemail_name = frappe.db.get_value(
                 "TP Voicemail", {"call_sid": call_sid}, "name"
@@ -488,6 +627,7 @@ def _send_voicemail_notification(email, from_number, to_number, recording_url, d
 # Conference Callbacks for Call Transfer Support
 # =============================================================================
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def handle_conference_status(**kwargs):
     """Handle conference status updates from Twilio.
@@ -496,7 +636,8 @@ def handle_conference_status(**kwargs):
     """
     from twilio.twiml.voice_response import VoiceResponse
 
-    args = frappe._dict(kwargs)
+    validate_twilio_request("handle_conference_status")  # //// Neoffice — see validate_twilio_request
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
     conference_name = args.FriendlyName or args.ConferenceSid
     status_event = args.StatusCallbackEvent
 
@@ -507,12 +648,14 @@ def handle_conference_status(**kwargs):
             # Conference started - dial agents
             _dial_agents_to_conference(conference_name)
 
-        elif status_event == "participant-join":
+        # //// Neoffice — a participant event names its call: without one, the lookup by call matched every
+        # conference that has no original call id.
+        elif status_event == "participant-join" and args.CallSid:
             # Update participant status in our records
             call_sid = args.CallSid
             _update_conference_participant(conference_name, call_sid, "Connected")
 
-        elif status_event == "participant-leave":
+        elif status_event == "participant-leave" and args.CallSid:  # //// Neoffice — see above
             # Update participant status
             call_sid = args.CallSid
             _update_conference_participant(conference_name, call_sid, "Left")
@@ -528,10 +671,12 @@ def handle_conference_status(**kwargs):
     return Response(resp.to_xml(), mimetype="text/xml")
 
 
+# permission-check: ok Twilio webhook (guest): validate_twilio_request checks its signature
 @frappe.whitelist(allow_guest=True)
 def handle_conference_participant(**kwargs):
     """Handle participant status updates in conference."""
-    args = frappe._dict(kwargs)
+    validate_twilio_request("handle_conference_participant")  # //// Neoffice — see validate_twilio_request
+    args = _webhook_args(kwargs)  # //// Neoffice — text only, see _webhook_args
     call_sid = args.CallSid
     call_status = args.CallStatus
     conference_name = args.get("FriendlyName") or args.get("ConferenceSid")
@@ -539,7 +684,10 @@ def handle_conference_participant(**kwargs):
     frappe.logger().info(f"Participant {call_sid} status: {call_status}")
 
     try:
-        if call_status == "completed":
+        # //// Neoffice — a participant event names its call, see handle_conference_status.
+        if not call_sid:
+            pass
+        elif call_status == "completed":
             _update_conference_participant(conference_name, call_sid, "Left")
         elif call_status == "answered":
             _update_conference_participant(conference_name, call_sid, "Connected")
@@ -798,8 +946,10 @@ def _convert_to_chf(amount: float, from_currency: str) -> float:
     return amount * rate
 
 
+# //// Neoffice — one Twilio call and one save per uncosted call, with no bound: the managers' maintenance, not
+# every signed-in account's, and the dates are text (neoffice-maintenance#2296).
 @frappe.whitelist()
-def recalculate_call_costs(from_date=None, to_date=None):
+def recalculate_call_costs(from_date: str | None = None, to_date: str | None = None):  # //// Neoffice — text
     """Recalculate costs for calls that don't have cost calculated.
 
     This is useful for backfilling costs for existing calls.
@@ -808,6 +958,7 @@ def recalculate_call_costs(from_date=None, to_date=None):
         from_date: Optional start date filter
         to_date: Optional end date filter
     """
+    check_telephony_manager()  # //// Neoffice — see above
     filters = {
         "telephony_medium": "Twilio",
         "status": "Completed",

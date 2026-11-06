@@ -4,6 +4,7 @@
 import frappe
 from frappe import _
 from frappe.model.document import Document
+from frappe.utils.password import set_encrypted_password  # //// Neoffice — see set_api_credentials
 from twilio.rest import Client
 
 
@@ -47,7 +48,12 @@ class TPTwilioSettings(Document):
             return
         new_key = self.create_api_key(twilio)
         self.api_key = new_key.sid
-        self.api_secret = new_key.secret
+        # //// Neoffice — this runs after the save stored the passwords, so the new secret went in clear into
+        # tabSingles, which any account that may read the settings reads, and into the Version of the save
+        # (neoffice-maintenance#2296). It goes encrypted into __Auth, as a Password field's value does; the
+        # document and tabSingles keep the mask, and get_password reads the secret.
+        set_encrypted_password(self.doctype, self.name, new_key.secret, "api_secret")
+        self.api_secret = "*" * len(new_key.secret)
         frappe.db.set_single_value(
             "TP Twilio Settings",
             {"api_key": self.api_key, "api_secret": self.api_secret},
