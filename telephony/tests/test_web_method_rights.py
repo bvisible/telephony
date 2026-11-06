@@ -10,7 +10,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import frappe
-from frappe.tests.roles import as_role
+from frappe.tests.roles import as_role, make_persona
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils.password import set_encrypted_password
 
@@ -23,6 +23,8 @@ AGENT = "tp-test-agent@yopmail.com"
 OTHER_AGENT = "tp-test-other-agent@yopmail.com"
 MANAGER = "tp-test-manager@yopmail.com"
 LINE_ONLY = "tp-test-line-only@yopmail.com"
+CRM_LINE = "tp-test-crm-line@yopmail.com"
+HELPDESK_AGENT = "tp-test-helpdesk-agent@yopmail.com"
 CONTACT_PHONE = "+41 21 555 01 23"
 
 
@@ -130,6 +132,86 @@ class TestTelephonyWebMethodRights(FrappeTestCase):
             created = api.create_call_log(id="CArights000000000000000000000005", **args)
         self.assertEqual(created.caller, AGENT)
 
+    # ------------------------------------------------------------------ logging a call on a document
+
+    def logged_call(self, links, caller=None):
+        return dict(
+            telephony_medium="Manual",
+            from_number="+41215550000",
+            to_number="+41215550001",
+            duration=10,
+            status="Completed",
+            call_type="Outgoing",
+            caller=caller,
+            receiver=None,
+            links=links,
+        )
+
+    def test_a_desk_account_logs_a_call_on_a_document_it_may_write_in_its_own_name(self):
+        user = make_persona("sales_user")
+        own = frappe.get_doc({"doctype": "ToDo", "description": "Call back", "allocated_to": user}).insert(
+            ignore_permissions=True
+        )
+        with as_role("sales_user"):
+            created = api.create_call_log(
+                id="CArights000000000000000000000006",
+                **self.logged_call([{"link_doctype": "ToDo", "link_name": own.name}], caller=AGENT),
+            )
+        self.assertEqual(created.caller, user, "the call is in the name of whoever logs it")
+        self.assertIn(("ToDo", own.name), [(row.link_doctype, row.link_name) for row in created.links])
+
+    def test_a_call_is_not_logged_on_a_document_one_may_not_write(self):
+        user = make_persona("sales_user")
+        theirs = frappe.get_doc(
+            {"doctype": "ToDo", "description": "Someone else's", "allocated_to": MANAGER}
+        ).insert(ignore_permissions=True)
+        own = frappe.get_doc({"doctype": "ToDo", "description": "Mine", "allocated_to": user}).insert(
+            ignore_permissions=True
+        )
+        refused = {
+            "a document of someone else": [{"link_doctype": "ToDo", "link_name": theirs.name}],
+            "no document": [],
+            "a contact only": [{"link_doctype": "Contact", "link_name": "x"}],
+            "no such doctype": [{"link_doctype": "No Such Doctype", "link_name": "x"}],
+            "one of the documents": [
+                {"link_doctype": "ToDo", "link_name": own.name},
+                {"link_doctype": "ToDo", "link_name": theirs.name},
+            ],
+        }
+        for n, (case, links) in enumerate(refused.items()):
+            with self.subTest(case=case), as_role("sales_user"), self.assertRaises(frappe.PermissionError):
+                api.create_call_log(id=f"CArights0000000000000000000001{n:02d}", **self.logged_call(links))
+        portal = make_persona("portal_customer")
+        portal_todo = frappe.get_doc(
+            {"doctype": "ToDo", "description": "Portal", "allocated_to": portal}
+        ).insert(ignore_permissions=True)
+        with as_role("portal_customer"), self.assertRaises(frappe.PermissionError):
+            api.create_call_log(
+                id="CArights000000000000000000000199",
+                **self.logged_call([{"link_doctype": "ToDo", "link_name": portal_todo.name}]),
+            )
+
+    def test_a_helpdesk_agent_logs_a_call_on_a_ticket(self):
+        if not (frappe.db.exists("DocType", "HD Ticket") and frappe.db.exists("DocType", "HD Agent")):
+            self.skipTest("helpdesk is not installed on this site")
+        ticket = frappe.get_all("HD Ticket", limit=1, pluck="name")
+        if not ticket:
+            self.skipTest("no HD Ticket on this site")
+        make_user(HELPDESK_AGENT, ["Agent"])
+        if not frappe.db.exists("HD Agent", HELPDESK_AGENT):
+            frappe.get_doc(
+                {"doctype": "HD Agent", "user": HELPDESK_AGENT, "agent_name": "Telephony Test", "is_active": 1}
+            ).insert(ignore_permissions=True)
+        frappe.db.set_single_value("HD Settings", "restrict_tickets_by_agent_group", 0)
+        links = [{"link_doctype": "HD Ticket", "link_name": ticket[0]}]
+        with as_role(HELPDESK_AGENT):
+            created = api.create_call_log(
+                id="CArights000000000000000000000200", **self.logged_call(links, caller=AGENT)
+            )
+        self.assertEqual(created.caller, HELPDESK_AGENT)
+        with as_role("sales_user"), self.assertRaises(frappe.PermissionError):
+            api.create_call_log(id="CArights000000000000000000000201", **self.logged_call(links))
+
     # ------------------------------------------------------------------ contact lookup
 
     def test_get_contact_by_phone_number_tells_a_contact_to_staff_only(self):
@@ -210,6 +292,31 @@ class TestTelephonyWebMethodRights(FrappeTestCase):
         self.assertTrue(status["ok"], status)
         self.assertTrue(resumed["ok"], resumed)
         fake.hold_participant.assert_called()
+
+    def test_a_line_in_crm_telephony_agent_counts_as_a_line(self):
+        if not (
+            frappe.db.exists("DocType", "CRM Telephony Agent")
+            and frappe.db.has_column("CRM Telephony Agent", "twilio")
+        ):
+            self.skipTest("no CRM Telephony Agent with a Twilio line on this site")
+        make_user(CRM_LINE, ["Blogger"] if frappe.db.exists("Role", "Blogger") else [])
+        frappe.db.set_value("User", CRM_LINE, "user_type", "System User")
+        if not frappe.db.exists("CRM Telephony Agent", {"user": CRM_LINE}):
+            frappe.get_doc({"doctype": "CRM Telephony Agent", "user": CRM_LINE}).insert(ignore_permissions=True)
+        name = frappe.db.get_value("CRM Telephony Agent", {"user": CRM_LINE})
+
+        def line(on):
+            frappe.db.sql("update `tabCRM Telephony Agent` set twilio=%s where name=%s", (on, name))
+
+        line(0)
+        with as_role(CRM_LINE), self.assertRaises(frappe.PermissionError):
+            twilio_transfer.get_available_transfer_targets()
+        line(1)
+        with as_role(CRM_LINE):
+            self.assertIn("ok", twilio_transfer.get_available_transfer_targets())
+        frappe.db.set_value("User", CRM_LINE, "user_type", "Website User")
+        with as_role(CRM_LINE), self.assertRaises(frappe.PermissionError):
+            twilio_transfer.get_available_transfer_targets()
 
     def test_transfer_targets_are_for_the_staff_who_take_calls(self):
         with as_role("portal_customer"), self.assertRaises(frappe.PermissionError):

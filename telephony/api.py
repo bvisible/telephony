@@ -86,9 +86,12 @@ def create_call_log(
     links,
 ):
     # //// Neoffice — the insert below skips the permissions, so any signed-in account wrote call records in the
-    # name of another user (neoffice-maintenance#2296): it takes the right to create a TP Call Log, as the
-    # REST API asks for the same record.
-    frappe.has_permission("TP Call Log", "create", throw=True)
+    # name of another user (neoffice-maintenance#2296). It takes the right to create a TP Call Log, as the REST
+    # API asks for the same record, or a desk account logging the call on a document it may write (helpdesk "Log
+    # a Call" on a ticket, by an agent with no telephony role): that call is in its own name.
+    if not frappe.has_permission("TP Call Log", "create"):
+        _check_call_logged_on_a_document(links)
+        caller = receiver = frappe.session.user
     call_log = frappe.get_doc(
         {
             "doctype": "TP Call Log",
@@ -114,6 +117,30 @@ def create_call_log(
     call_log.save(ignore_permissions=True)
 
     return call_log
+
+
+# //// Neoffice — see create_call_log: the mirror of _check_call_log_access, for writing.
+def _check_call_logged_on_a_document(links) -> None:
+    """Refuse unless a desk account logs the call on documents it may write (the Contact link aside)."""
+    if frappe.db.get_value("User", frappe.session.user, "user_type") != "System User":
+        frappe.throw(frappe._("Not permitted"), frappe.PermissionError)
+    rows = frappe.parse_json(links) if isinstance(links, str) else links
+    documents = [
+        (row.get("link_doctype"), row.get("link_name"))
+        for row in (rows if isinstance(rows, list) else [])
+        if isinstance(row, dict) and row.get("link_doctype") != "Contact"
+    ]
+    if not documents:
+        frappe.throw(frappe._("Not permitted"), frappe.PermissionError)
+    for doctype, name in documents:
+        if not (
+            isinstance(doctype, str)
+            and isinstance(name, str)
+            and frappe.db.exists("DocType", doctype)
+            and frappe.db.exists(doctype, name)
+            and frappe.has_permission(doctype, "write", name)
+        ):
+            frappe.throw(frappe._("Not permitted"), frappe.PermissionError)
 
 
 # //// Neoffice — upstream returned any call record to any signed-in account, and an untyped `name` sent as a JSON

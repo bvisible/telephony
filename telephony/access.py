@@ -6,9 +6,10 @@ methods act on calls, on the people who take them and on the account that pays f
 who handle calls and refuse everyone else.
 
 A staff member who handles calls holds a telephony role, or a phone line switched on in their TP Telephony Agent
-row (`twilio` or `exotel`): that is how the softphone of neoffice_theme decides who gets a phone
-(`check_softphone_access`). The line counts on a desk account only: any account may create its own empty agent row
-(`create_telephony_agent`), but switching a line on takes a desk account or a manager.
+row (`twilio` or `exotel`) or their CRM Telephony Agent row (`twilio`, where the mobile app writes the number a
+user picks): that is how the softphone of neoffice_theme decides who gets a phone (`check_softphone_access`). The
+line counts on a desk account only: any account may create its own empty agent row (`create_telephony_agent`), but
+switching a line on takes a desk account or a manager.
 """
 
 import frappe
@@ -33,7 +34,19 @@ def is_telephony_user(user: str | None = None) -> bool:
         return True
     if frappe.db.get_value("User", user, "user_type") != "System User":
         return False
-    return any(frappe.db.exists("TP Telephony Agent", {"user": user, line: 1}) for line in ("twilio", "exotel"))
+    if any(frappe.db.exists("TP Telephony Agent", {"user": user, line: 1}) for line in ("twilio", "exotel")):
+        return True
+    return _has_crm_twilio_line(user)
+
+
+def _has_crm_twilio_line(user: str) -> bool:
+    """A CRM Telephony Agent row with its Twilio line on, as check_softphone_access reads it. The `twilio` column is
+    not in every crm schema: without it, no line."""
+    return bool(
+        frappe.db.exists("DocType", "CRM Telephony Agent")
+        and frappe.db.has_column("CRM Telephony Agent", "twilio")
+        and frappe.db.exists("CRM Telephony Agent", {"user": user, "twilio": 1})
+    )
 
 
 def check_telephony_user() -> None:
