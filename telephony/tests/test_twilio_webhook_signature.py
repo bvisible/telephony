@@ -56,12 +56,18 @@ class TestTwilioWebhookSignature(FrappeTestCase):
             frappe.db.set_single_value("TP Twilio Settings", field, "*" * len(value))
         for webhook in ("twilio_incoming_call_handler", "update_recording_info"):
             frappe.cache().delete_value(f"telephony:twilio_signature_mismatch:{webhook}")
+        # Error Log is a MyISAM table on a fresh site (the CI): its rows outlive the rollback, so a test counts
+        # the rows it made and removes them itself.
+        self.rows_before = set(self.all_mismatch_rows())
         self.commit = patch.object(frappe.db, "commit")
         self.commit.start()
 
     def tearDown(self):
         self.commit.stop()
+        made = self.mismatch_rows()
         frappe.db.rollback(save_point="tp_twilio_signature")
+        if made:
+            frappe.db.delete("Error Log", {"name": ["in", made]})
         frappe.local.request = None
 
     def set_mode(self, mode):
@@ -79,8 +85,12 @@ class TestTwilioWebhookSignature(FrappeTestCase):
             headers={"X-Forwarded-Proto": "https", "X-Twilio-Signature": signature},
         )
 
-    def mismatch_rows(self):
+    def all_mismatch_rows(self):
         return frappe.get_all("Error Log", filters={"method": MISMATCH_TITLE}, pluck="name")
+
+    def mismatch_rows(self):
+        """The mismatch rows this test wrote."""
+        return [name for name in self.all_mismatch_rows() if name not in self.rows_before]
 
     def test_enforce_serves_a_request_signed_for_the_url_twilio_called(self):
         self.set_mode("Enforce")
