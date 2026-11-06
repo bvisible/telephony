@@ -9,19 +9,29 @@ on:
   pull_request:
     types: [closed]
     branches: [version-15]
+permissions:
+  contents: read
 jobs:
   queue:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      # Every value reaches the shell as an environment variable, never pasted into the script: a branch name is
+      # chosen by whoever opens the PR, and one holding `"` and `$(...)` would run in the step that holds the secret.
       - name: Queue the app for tonight's nightly deploy
+        env:
+          SECRET: ${{ secrets.CI_REPORT_SECRET }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
           curl -sS --max-time 20 -X POST \
             "https://neoservice.neoffice.me/api/method/neoffice_devops.github.deploy_hook.pr_merged" \
-            --data-urlencode "secret=${{ secrets.CI_REPORT_SECRET }}" \
-            --data-urlencode "repo=${{ github.repository }}" \
+            --data-urlencode "secret=${SECRET}" \
+            --data-urlencode "repo=${REPO}" \
             --data-urlencode "app=telephony" \
-            --data-urlencode "pr=${{ github.event.pull_request.number }}" \
-            --data-urlencode "head_ref=${{ github.event.pull_request.head.ref }}" \
-            --data-urlencode "base_ref=${{ github.event.pull_request.base.ref }}"
+            --data-urlencode "pr=${PR}" \
+            --data-urlencode "head_ref=${HEAD_REF}" \
+            --data-urlencode "base_ref=${BASE_REF}"
