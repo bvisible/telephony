@@ -251,7 +251,15 @@ def _check_outgoing_call(from_number, caller_id, link_doctype, link_docname) -> 
 
 
 # //// Neoffice — see handle_request: the agents of the call, or the Exotel agents when the event names none.
+# A failure here is logged: it must not stop the call log below, as the plain broadcast never did.
 def _publish_call_event(call_payload) -> None:
+    try:
+        _publish_to_the_agents(call_payload)
+    except Exception:
+        frappe.log_error("Exotel call event not published", frappe.get_traceback())
+
+
+def _publish_to_the_agents(call_payload) -> None:
     payload = {key: value for key, value in call_payload.items() if key != "key"}
     users = {payload.get("AgentEmail")} - {None, ""}
     call_id = payload.get("CallSid")

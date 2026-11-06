@@ -39,18 +39,33 @@ def validate_twilio_request(webhook: str | None = None) -> None:
     """Checks the Twilio signature of the request, as TP Twilio Settings says (Off, Observe, Enforce).
 
     `webhook` names the method in the log; upstream calls this with no argument, so it defaults to the path's.
+    In Observe, nothing in the check itself may refuse a call: a check that cannot run is a mismatch to log.
+    In Enforce it is a refusal.
     """
-    webhook = webhook or frappe.request.path.rsplit(".", 1)[-1]
-    settings = frappe.get_cached_doc("TP Twilio Settings")
-    mode = settings.get("webhook_signature_check") or SIGNATURE_CHECK_OBSERVE
+    try:  # //// Neoffice — Observe never refuses, see the docstring
+        settings = frappe.get_cached_doc("TP Twilio Settings")
+        mode = settings.get("webhook_signature_check") or SIGNATURE_CHECK_OBSERVE
+    except Exception:
+        settings, mode = None, SIGNATURE_CHECK_OBSERVE
     if mode == SIGNATURE_CHECK_OFF:
         return
-    reason = twilio_signature_mismatch(settings)
+    try:  # //// Neoffice — Observe never refuses, see the docstring
+        reason = twilio_signature_mismatch(settings) if settings else "the settings could not be read"
+    except Exception as e:
+        reason = f"the check could not run ({type(e).__name__})"
     if not reason:
         return
     if mode == SIGNATURE_CHECK_ENFORCE:
         frappe.throw(_("Invalid Twilio request signature"), frappe.PermissionError)
-    _note_signature_mismatch(webhook, reason)
+    try:  # //// Neoffice — Observe never refuses, see the docstring
+        _note_signature_mismatch(webhook or _webhook_name(), reason)
+    except Exception:
+        frappe.logger("twilio").warning(f"{webhook}: Twilio signature mismatch not logged ({reason})")
+
+
+def _webhook_name() -> str:
+    request = getattr(frappe.local, "request", None)
+    return request.path.rsplit(".", 1)[-1] if request else "unknown webhook"
 
 
 def twilio_signature_mismatch(settings) -> str | None:

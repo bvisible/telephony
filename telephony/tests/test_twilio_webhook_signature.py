@@ -131,6 +131,18 @@ class TestTwilioWebhookSignature(FrappeTestCase):
             twilio_incoming_call_handler(**FORM)
         self.assertFalse(self.mismatch_rows())
 
+    def test_observe_serves_a_call_even_when_the_check_cannot_run(self):
+        self.make_request(sign_with=AUTH_TOKEN)
+        with patch.object(api, "twilio_signature_mismatch", side_effect=RuntimeError("broken")), as_role("Guest"):
+            twilio_incoming_call_handler(**FORM)
+        self.assertTrue(frappe.db.exists("TP Call Log", CALL_SID))
+        self.assertEqual(len(self.mismatch_rows()), 1)
+
+        self.set_mode("Enforce")
+        with patch.object(api, "twilio_signature_mismatch", side_effect=RuntimeError("broken")), as_role("Guest"):
+            with self.assertRaises(frappe.PermissionError):
+                twilio_incoming_call_handler(**{**FORM, "CallSid": CALL_SID[:-1] + "3"})
+
     def test_off_serves_without_checking(self):
         self.set_mode("Off")
         self.make_request()
