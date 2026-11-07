@@ -325,6 +325,35 @@ class TestTelephonyWebMethodRights(FrappeTestCase):
             with self.subTest(user=user), as_role(user):
                 self.assertIn("ok", twilio_transfer.get_available_transfer_targets())
 
+    def test_the_transfer_targets_are_the_colleagues_with_a_twilio_line(self):
+        # The list read an `enabled` field the agent does not have, and `Sessions` as a DocType: it answered
+        # ok False to everyone, so no transfer could pick a colleague.
+        with as_role(LINE_ONLY):
+            answer = twilio_transfer.get_available_transfer_targets()
+        self.assertTrue(answer["ok"], answer)
+        users = {target["user"] for target in answer["targets"]}
+        self.assertIn(AGENT, users)
+        self.assertNotIn(LINE_ONLY, users, "not oneself")
+
+    def test_a_transfer_from_the_mobile_app_names_its_destination_target(self):
+        # The phone sends {call_sid, target}, the desk {call_sid, transfer_to}: played through frappe.call, which
+        # binds the arguments as the web handler does.
+        fake = MagicMock()
+        fake.dial_into_conference.return_value = SimpleNamespace(call_sid="CAtransfer000000000000000000000001")
+        fake.hold_participant.return_value = True
+        with patch.object(twilio_transfer.Twilio, "connect", return_value=fake):
+            for method in ("cold_transfer", "warm_transfer_initiate"):
+                conference = self.make_conference(name=f"conf_mobile_{method}")
+                with self.subTest(method=method), as_role(AGENT):
+                    answer = frappe.call(
+                        f"telephony.twilio.twilio_transfer.{method}",
+                        call_sid=f"{conference.conference_name}_agent",
+                        target="+41215550999",
+                        transfer_type="phone",
+                    )
+                    self.assertTrue(answer["ok"], answer)
+                    self.assertEqual(fake.dial_into_conference.call_args.kwargs["to"], "+41215550999")
+
     # ------------------------------------------------------------------ the managers' maintenance
 
     def test_twilio_maintenance_is_the_managers(self):

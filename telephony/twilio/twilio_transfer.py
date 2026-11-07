@@ -102,7 +102,9 @@ def get_conference_status(call_sid: str = None, conference_name: str = None):
 
 
 @frappe.whitelist()
-def cold_transfer(call_sid: str, transfer_to: str, transfer_type: str = "user"):
+def cold_transfer(
+    call_sid: str, transfer_to: str | None = None, transfer_type: str = "user", target: str | None = None
+):
     """Perform a cold (blind) transfer.
 
     The current agent is disconnected immediately and the caller is connected
@@ -117,6 +119,11 @@ def cold_transfer(call_sid: str, transfer_to: str, transfer_type: str = "user"):
         dict with success status
     """
     conf_doc = _conference_of(call_sid)  # //// Neoffice — the people on the call, see _check_on_the_call
+    # //// Neoffice — the mobile app sends the destination as `target`, the desk as `transfer_to`: both name the
+    # same person or number. A transfer from the phone died on the missing `transfer_to`.
+    transfer_to = transfer_to or target
+    if not transfer_to:
+        return {"ok": False, "error": "No transfer destination"}
     try:
         # Find the active conference
         if not conf_doc:
@@ -223,7 +230,9 @@ def cold_transfer(call_sid: str, transfer_to: str, transfer_type: str = "user"):
 
 
 @frappe.whitelist()
-def warm_transfer_initiate(call_sid: str, transfer_to: str, transfer_type: str = "user"):
+def warm_transfer_initiate(
+    call_sid: str, transfer_to: str | None = None, transfer_type: str = "user", target: str | None = None
+):
     """Initiate a warm (attended) transfer - Step 1.
 
     Puts the caller on hold and dials the transfer target.
@@ -238,6 +247,11 @@ def warm_transfer_initiate(call_sid: str, transfer_to: str, transfer_type: str =
         dict with transfer_call_sid to track the new call
     """
     conf_doc = _conference_of(call_sid)  # //// Neoffice — the people on the call, see _check_on_the_call
+    # //// Neoffice — the mobile app sends the destination as `target`, the desk as `transfer_to`: both name the
+    # same person or number. A transfer from the phone died on the missing `transfer_to`.
+    transfer_to = transfer_to or target
+    if not transfer_to:
+        return {"ok": False, "error": "No transfer destination"}
     try:
         # Find the active conference
         if not conf_doc:
@@ -516,9 +530,11 @@ def get_available_transfer_targets():
     check_telephony_user()
     try:
         # Get all telephony agents
+        # //// Neoffice — the agent has no `enabled` field: the list always failed. A colleague takes a transfer
+        # when Twilio is on for him.
         agents = frappe.get_all(
             "TP Telephony Agent",
-            filters={"enabled": 1},
+            filters={"twilio": 1},
             fields=["name", "user", "twilio_number", "call_receiving_device"],
         )
 
@@ -540,10 +556,8 @@ def get_available_transfer_targets():
 
             if user_info:
                 # Check if user is online (has active session)
-                is_online = frappe.db.exists(
-                    "Sessions",
-                    {"user": agent.user},
-                )
+                # //// Neoffice — `Sessions` is a table, not a DocType (no `name` column): read it directly.
+                is_online = frappe.db.sql("select 1 from `tabSessions` where user = %s limit 1", (agent.user,))
 
                 result.append({
                     "user": agent.user,
