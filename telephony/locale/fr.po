@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telephony VERSION\n"
 "Report-Msgid-Bugs-To: pratik@frappe.io\n"
-"POT-Creation-Date: 2026-11-03 03:34+0000\n"
+"POT-Creation-Date: 2026-11-07 03:34+0000\n"
 "PO-Revision-Date: 2026-05-12 16:22+0034\n"
 "Last-Translator: pratik@frappe.io\n"
 "Language-Team: pratik@frappe.io\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: telephony/twilio/api.py:461
+#: telephony/twilio/api.py:615
 #, python-brace-format
 msgid ""
 "\n"
@@ -42,19 +42,19 @@ msgstr ""
 "            "
 
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:111
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:121
 msgid " App Name"
 msgstr " Nom de l'application"
 
 #. Label of a Data field in DocType 'TP Exotel Settings'
 #. Label of a Data field in DocType 'TP Twilio Settings'
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:80
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:83
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:93
 msgid "API Key"
 msgstr "Clé API"
 
 #. Label of a Password field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:103
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:113
 msgid "API Secret"
 msgstr "Secret API"
 
@@ -66,7 +66,7 @@ msgstr "Jeton API"
 #. Label of a Data field in DocType 'TP Exotel Settings'
 #. Label of a Data field in DocType 'TP Twilio Settings'
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:48
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:59
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:69
 msgid "Account SID"
 msgstr "SID du compte"
 
@@ -87,7 +87,7 @@ msgstr "Actif"
 msgid "Agent"
 msgstr "Agent"
 
-#: telephony/twilio/api.py:260 telephony/twilio/api.py:298
+#: telephony/twilio/api.py:405 telephony/twilio/api.py:446
 #: telephony/twilio/twilio_handler.py:593
 msgid "Agent is unavailable to take the call, please call after some time."
 msgstr ""
@@ -111,11 +111,11 @@ msgstr "Agents vers lesquels acheminer les appels, par ordre de priorité"
 
 #. Name of a role
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:129
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:157
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:167
 msgid "All"
 msgstr "Tous"
 
-#: telephony/twilio/api.py:251 telephony/twilio/api.py:332
+#: telephony/twilio/api.py:396 telephony/twilio/api.py:480
 #: telephony/twilio/twilio_handler.py:547
 #: telephony/twilio/twilio_handler.py:554
 msgid "All agents are currently busy. Please try again later."
@@ -138,7 +138,7 @@ msgid "Assigned Phone Numbers"
 msgstr "Numéros de téléphone attribués"
 
 #. Label of a Password field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:71
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:81
 msgid "Auth Token"
 msgstr "Jeton d'authentification"
 
@@ -308,7 +308,7 @@ msgstr "Durée (secondes)"
 #. Label of a Check field in DocType 'TP Twilio Settings'
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:26
 #: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:42
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:36
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:37
 msgid "Enabled"
 msgstr "Activé"
 
@@ -329,6 +329,12 @@ msgstr "Terminé"
 msgid "Ended At"
 msgstr "Terminé le"
 
+#. Option for the 'Webhook Signature Check' (Select) field in DocType 'TP
+#. Twilio Settings'
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:57
+msgid "Enforce"
+msgstr "Appliquer"
+
 #. Option for the 'Telephony Medium' (Select) field in DocType 'TP Call Log'
 #. Option for the 'Default Medium' (Select) field in DocType 'TP Telephony
 #. Agent'
@@ -339,7 +345,7 @@ msgstr "Terminé le"
 msgid "Exotel"
 msgstr "Exotel"
 
-#: telephony/exotel/handler.py:128
+#: telephony/exotel/handler.py:149
 msgid "Exotel Exception"
 msgstr "Exception Exotel"
 
@@ -348,11 +354,11 @@ msgstr "Exception Exotel"
 msgid "Exotel Number"
 msgstr "Numéro Exotel"
 
-#: telephony/exotel/handler.py:94
+#: telephony/exotel/handler.py:114
 msgid "Exotel Number Missing"
 msgstr "Numéro Exotel manquant"
 
-#: telephony/exotel/handler.py:99
+#: telephony/exotel/handler.py:119
 #, python-brace-format
 msgid "Exotel Number {0} is not valid"
 msgstr "Le numéro Exotel {0} n'est pas valide"
@@ -362,11 +368,11 @@ msgstr "Le numéro Exotel {0} n'est pas valide"
 msgid "Failed"
 msgstr "Échoué"
 
-#: telephony/twilio/api.py:158
+#: telephony/twilio/api.py:294
 msgid "Failed to capture Twilio recording"
 msgstr "Échec de la capture de l'enregistrement Twilio"
 
-#: telephony/twilio/api.py:182
+#: telephony/twilio/api.py:324
 msgid "Failed to update Twilio call status"
 msgstr "Échec de la mise à jour du statut d'appel Twilio"
 
@@ -441,21 +447,33 @@ msgstr "Entrant"
 msgid "Initiated"
 msgstr "Initié"
 
-#: telephony/exotel/handler.py:76
+#: telephony/exotel/handler.py:95
 msgid "Integration Not Enabled"
 msgstr "Intégration non activée"
 
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.py:42
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.py:43
 msgid "Invalid Account SID or Auth Token."
 msgstr "SID de compte ou jeton d'authentification invalide."
 
-#: telephony/exotel/handler.py:100
+#: telephony/exotel/handler.py:120
 msgid "Invalid Exotel Number"
 msgstr "Numéro Exotel invalide"
 
-#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.py:27
+#: telephony/twilio/api.py:184
+msgid "Invalid Twilio request"
+msgstr "Requête Twilio invalide"
+
+#: telephony/twilio/api.py:59
+msgid "Invalid Twilio request signature"
+msgstr "Signature de requête Twilio invalide"
+
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.py:47
 msgid "Invalid credentials"
 msgstr "Identifiants invalides"
+
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.py:30
+msgid "Invalid subdomain"
+msgstr "Sous-domaine invalide"
 
 #. Label of a Check field in DocType 'TP Telephony Phone'
 #: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json:25
@@ -540,7 +558,7 @@ msgstr "Message"
 msgid "Mobile No."
 msgstr "N° Mobile."
 
-#: telephony/exotel/handler.py:106
+#: telephony/exotel/handler.py:126
 msgid "Mobile Number Missing"
 msgstr "Numéro de mobile manquant"
 
@@ -561,7 +579,7 @@ msgstr "Nom"
 msgid "New"
 msgstr "Nouveau"
 
-#: telephony/twilio/api.py:459
+#: telephony/twilio/api.py:613
 #, python-brace-format
 msgid "New Voicemail from {0}"
 msgstr "Nouveau message vocal de {0}"
@@ -583,6 +601,13 @@ msgstr ""
 "Aucun agent d'acheminement configuré. Les appels vers ce numéro seront "
 "redirigés vers la messagerie vocale."
 
+#: telephony/access.py:55 telephony/access.py:61 telephony/api.py:126
+#: telephony/api.py:134 telephony/api.py:143 telephony/api.py:192
+#: telephony/exotel/handler.py:238 telephony/exotel/handler.py:250
+#: telephony/twilio/twilio_transfer.py:35
+msgid "Not permitted"
+msgstr ""
+
 #. Label of a Data field in DocType 'TP Phone Number Config'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:182
 msgid "Notification Email"
@@ -598,6 +623,18 @@ msgctxt "TP Telephony Phone"
 msgid "Number"
 msgstr "Numéro"
 
+#. Option for the 'Webhook Signature Check' (Select) field in DocType 'TP
+#. Twilio Settings'
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:57
+msgid "Observe"
+msgstr "Observer"
+
+#. Option for the 'Webhook Signature Check' (Select) field in DocType 'TP
+#. Twilio Settings'
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:57
+msgid "Off"
+msgstr ""
+
 #. Option for the 'Status' (Select) field in DocType 'TP Call Conference'
 #. Option for the 'Status' (Select) field in DocType 'TP Conference
 #. Participant'
@@ -605,6 +642,12 @@ msgstr "Numéro"
 #: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:64
 msgid "On Hold"
 msgstr "En attente"
+
+#: telephony/exotel/handler.py:243
+msgid "Only a telephony manager may place a call from another number"
+msgstr ""
+"Seul un responsable de la téléphonie peut passer un appel depuis un autre "
+"numéro"
 
 #. Label of a Data field in DocType 'TP Call Conference'
 #: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:56
@@ -665,12 +708,12 @@ msgstr "Veuillez configurer les heures d'ouverture ou désactiver l'option"
 msgid "Please enable twilio to proceed."
 msgstr "Veuillez activer Twilio pour continuer."
 
-#: telephony/twilio/api.py:237 telephony/twilio/api.py:318
+#: telephony/twilio/api.py:382 telephony/twilio/api.py:466
 #: telephony/twilio/twilio_handler.py:569
 msgid "Please leave a message after the tone."
 msgstr "Veuillez laisser un message après le signal sonore."
 
-#: telephony/exotel/handler.py:76
+#: telephony/exotel/handler.py:95
 msgid "Please setup Exotel intergration"
 msgstr "Veuillez configurer l'intégration Exotel"
 
@@ -694,7 +737,7 @@ msgstr "Dans la file d'attente"
 #. Label of a Check field in DocType 'TP Phone Number Config'
 #. Label of a Check field in DocType 'TP Twilio Settings'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:202
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:47
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:48
 msgid "Record Calls"
 msgstr "Enregistrer les appels"
 
@@ -844,7 +887,7 @@ msgstr "Dimanche"
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:111
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:242
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:162
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:139
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:149
 #: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:120
 msgid "System Manager"
 msgstr "Administrateur système"
@@ -890,7 +933,7 @@ msgstr "TP Exotel Settings"
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:121
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:254
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:186
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:149
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:159
 msgid "TP Manager"
 msgstr "TP Manager"
 
@@ -915,7 +958,7 @@ msgid "TP Telephony Phone"
 msgstr "TP Telephony Phone"
 
 #. Name of a DocType
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:130
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:140
 msgid "TP Twilio Settings"
 msgstr "TP Twilio Settings"
 
@@ -935,9 +978,17 @@ msgstr "Moyen de téléphonie"
 msgid "Telephony User"
 msgstr "Telephony User"
 
-#: telephony/twilio/api.py:424
+#: telephony/twilio/api.py:574
 msgid "Thank you. Goodbye."
 msgstr "Merci. Au revoir."
+
+#: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.py:29
+msgid ""
+"The subdomain must be the API host of your Exotel account, such as "
+"api.exotel.com"
+msgstr ""
+"Le sous-domaine doit être l'hôte API de votre compte Exotel, par exemple "
+"api.exotel.com"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
 #: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
@@ -986,7 +1037,7 @@ msgid "Tuesday"
 msgstr "Mardi"
 
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:91
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:101
 msgid "TwiML SID"
 msgstr "SID TwiML"
 
@@ -1000,13 +1051,13 @@ msgstr "SID TwiML"
 msgid "Twilio"
 msgstr "Twilio"
 
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.py:73
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.py:74
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.py:79
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.py:80
 msgid "Twilio API credential creation error."
 msgstr "Erreur de création des identifiants API Twilio."
 
 #. Label of a Data field in DocType 'TP Twilio Settings'
-#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:121
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:131
 msgid "Twilio Apps"
 msgstr "Applications Twilio"
 
@@ -1015,6 +1066,19 @@ msgstr "Applications Twilio"
 msgid "Twilio Number"
 msgstr "Numéro Twilio"
 
+#. Description of the 'Webhook Signature Check' (Select) field in DocType 'TP
+#. Twilio Settings'
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:53
+msgid ""
+"Twilio signs every webhook request. Observe serves a request that does not "
+"verify and records it in the Error Log; Enforce refuses it. Switch to "
+"Enforce once a real call left no mismatch in the Error Log."
+msgstr ""
+"Twilio signe chaque requête webhook. Le mode Observer traite une requête "
+"dont la signature ne correspond pas et la consigne dans le Error Log ; le "
+"mode Appliquer la refuse. Passez en mode Appliquer lorsqu'un appel réel n'a "
+"laissé aucune incohérence dans le Error Log."
+
 #. Label of a Select field in DocType 'TP Call Log'
 #. Label of a Select field in DocType 'TP Conference Participant'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:105
@@ -1022,7 +1086,7 @@ msgstr "Numéro Twilio"
 msgid "Type"
 msgstr "Type"
 
-#: telephony/exotel/handler.py:195
+#: telephony/exotel/handler.py:220
 msgid "Unauthorized request"
 msgstr "Requête non autorisée"
 
@@ -1071,7 +1135,12 @@ msgstr ""
 "Nous sommes actuellement fermés. Veuillez rappeler pendant nos heures "
 "d'ouverture."
 
-#. Label of a Data field in DocType 'TP Exotel Settings'
+#. Label of a Select field in DocType 'TP Twilio Settings'
+#: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:56
+msgid "Webhook Signature Check"
+msgstr "Contrôle de la signature des webhooks"
+
+#. Label of a Password field in DocType 'TP Exotel Settings'
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:66
 msgid "Webhook Verify Token"
 msgstr "Jeton de vérification du webhook"
@@ -1094,12 +1163,12 @@ msgid "When unchecked, this agent will not receive incoming calls"
 msgstr ""
 "Si cette case est décochée, cet agent ne recevra pas d'appels entrants"
 
-#: telephony/exotel/handler.py:93
+#: telephony/exotel/handler.py:113
 msgid "You do not have Exotel Number set in your Telephony Agent"
 msgstr ""
 "Vous n'avez pas de numéro Exotel défini dans votre agent de téléphonie"
 
-#: telephony/exotel/handler.py:105
+#: telephony/exotel/handler.py:125
 msgid "You do not have mobile number set in your Telephony Agent"
 msgstr ""
 "Vous n'avez pas de numéro de mobile défini dans votre agent de téléphonie"
