@@ -7,15 +7,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telephony VERSION\n"
 "Report-Msgid-Bugs-To: pratik@frappe.io\n"
-"POT-Creation-Date: 2026-11-07 03:34+0000\n"
+"POT-Creation-Date: 2026-11-10 03:34+0000\n"
 "PO-Revision-Date: 2026-05-12 16:22+0034\n"
 "Last-Translator: pratik@frappe.io\n"
-"Language-Team: pratik@frappe.io\n"
 "Language: fr\n"
+"Language-Team: pratik@frappe.io\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "Generated-By: Babel 2.18.0\n"
 
 #: telephony/twilio/api.py:615
@@ -90,9 +90,7 @@ msgstr "Agent"
 #: telephony/twilio/api.py:405 telephony/twilio/api.py:446
 #: telephony/twilio/twilio_handler.py:593
 msgid "Agent is unavailable to take the call, please call after some time."
-msgstr ""
-"L'agent n'est pas disponible pour prendre l'appel, veuillez rappeler plus "
-"tard."
+msgstr "L'agent n'est pas disponible pour prendre l'appel, veuillez rappeler plus tard."
 
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.py:63
 msgid "Agent priorities must be unique"
@@ -119,8 +117,7 @@ msgstr "Tous"
 #: telephony/twilio/twilio_handler.py:547
 #: telephony/twilio/twilio_handler.py:554
 msgid "All agents are currently busy. Please try again later."
-msgstr ""
-"Tous les agents sont actuellement occupés. Veuillez réessayer plus tard."
+msgstr "Tous les agents sont actuellement occupés. Veuillez réessayer plus tard."
 
 #. Option for the 'Status' (Select) field in DocType 'TP Voicemail'
 #: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:42
@@ -376,8 +373,7 @@ msgstr "Échec de la capture de l'enregistrement Twilio"
 msgid "Failed to update Twilio call status"
 msgstr "Échec de la mise à jour du statut d'appel Twilio"
 
-#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone
-#. Number
+#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone Number
 #. Config'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:104
 msgid "Forward"
@@ -403,8 +399,7 @@ msgstr "De"
 msgid "From Number"
 msgstr "Numéro d'origine"
 
-#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone
-#. Number
+#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone Number
 #. Config'
 #. Option for the 'Outside Hours Action' (Select) field in DocType 'TP Phone
 #. Number Config'
@@ -519,8 +514,7 @@ msgstr "Plus petit numéro = priorité plus haute"
 #. Description of the 'Priority' (Int) field in DocType 'TP Telephony Agent'
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:83
 msgid "Lower number = higher priority in call routing"
-msgstr ""
-"Un nombre plus petit = priorité plus élevée dans l'acheminement des appels"
+msgstr "Un nombre plus petit = priorité plus élevée dans l'acheminement des appels"
 
 #. Option for the 'Telephony Medium' (Select) field in DocType 'TP Call Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:44
@@ -543,8 +537,7 @@ msgstr "Temps de sonnerie maximum avant action de non-réponse"
 msgid "Medium"
 msgstr "Moyen"
 
-#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone
-#. Number
+#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone Number
 #. Config'
 #. Option for the 'Outside Hours Action' (Select) field in DocType 'TP Phone
 #. Number Config'
@@ -595,11 +588,8 @@ msgid "No Answer Action"
 msgstr "Action si non-réponse"
 
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.py:55
-msgid ""
-"No routing agents configured. Calls to this number will go to voicemail."
-msgstr ""
-"Aucun agent d'acheminement configuré. Les appels vers ce numéro seront "
-"redirigés vers la messagerie vocale."
+msgid "No routing agents configured. Calls to this number will go to voicemail."
+msgstr "Aucun agent d'acheminement configuré. Les appels vers ce numéro seront redirigés vers la messagerie vocale."
 
 #: telephony/access.py:55 telephony/access.py:61 telephony/api.py:126
 #: telephony/api.py:134 telephony/api.py:143 telephony/api.py:192
@@ -645,9 +635,7 @@ msgstr "En attente"
 
 #: telephony/exotel/handler.py:243
 msgid "Only a telephony manager may place a call from another number"
-msgstr ""
-"Seul un responsable de la téléphonie peut passer un appel depuis un autre "
-"numéro"
+msgstr "Seul un responsable de la téléphonie peut passer un appel depuis un autre numéro"
 
 #. Label of a Data field in DocType 'TP Call Conference'
 #: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:56
@@ -689,16 +677,11 @@ msgstr "Téléphone"
 msgid "Phone Number"
 msgstr "Numéro de téléphone"
 
-#. Description of the 'Assigned Numbers' (Table) field in DocType 'TP
-#. Telephony
+#. Description of the 'Assigned Numbers' (Table) field in DocType 'TP Telephony
 #. Agent'
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:95
-msgid ""
-"Phone numbers this agent can receive calls from. Configure ring delay per "
-"number."
-msgstr ""
-"Numéros de téléphone depuis lesquels cet agent peut recevoir des appels. "
-"Configurez le délai de sonnerie par numéro."
+msgid "Phone numbers this agent can receive calls from. Configure ring delay per number."
+msgstr "Numéros de téléphone depuis lesquels cet agent peut recevoir des appels. Configurez le délai de sonnerie par numéro."
 
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.py:68
 msgid "Please configure business hours or disable the option"
@@ -824,9 +807,7 @@ msgstr "Secondes de sonnerie pour chaque agent en mode séquentiel"
 #. Agent'
 #: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:54
 msgid "Seconds to wait before ringing this agent (for sequential mode)"
-msgstr ""
-"Secondes à attendre avant de faire sonner cet agent (pour le mode "
-"séquentiel)"
+msgstr "Secondes à attendre avant de faire sonner cet agent (pour le mode séquentiel)"
 
 #. Description of the 'Ring Delay (s)' (Int) field in DocType 'TP Agent Phone
 #. Assignment'
@@ -983,12 +964,8 @@ msgid "Thank you. Goodbye."
 msgstr "Merci. Au revoir."
 
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.py:29
-msgid ""
-"The subdomain must be the API host of your Exotel account, such as "
-"api.exotel.com"
-msgstr ""
-"Le sous-domaine doit être l'hôte API de votre compte Exotel, par exemple "
-"api.exotel.com"
+msgid "The subdomain must be the API host of your Exotel account, such as api.exotel.com"
+msgstr "Le sous-domaine doit être l'hôte API de votre compte Exotel, par exemple api.exotel.com"
 
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
 #: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
@@ -1069,15 +1046,8 @@ msgstr "Numéro Twilio"
 #. Description of the 'Webhook Signature Check' (Select) field in DocType 'TP
 #. Twilio Settings'
 #: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:53
-msgid ""
-"Twilio signs every webhook request. Observe serves a request that does not "
-"verify and records it in the Error Log; Enforce refuses it. Switch to "
-"Enforce once a real call left no mismatch in the Error Log."
-msgstr ""
-"Twilio signe chaque requête webhook. Le mode Observer traite une requête "
-"dont la signature ne correspond pas et la consigne dans le Error Log ; le "
-"mode Appliquer la refuse. Passez en mode Appliquer lorsqu'un appel réel n'a "
-"laissé aucune incohérence dans le Error Log."
+msgid "Twilio signs every webhook request. Observe serves a request that does not verify and records it in the Error Log; Enforce refuses it. Switch to Enforce once a real call left no mismatch in the Error Log."
+msgstr "Twilio signe chaque requête webhook. Le mode Observer traite une requête dont la signature ne correspond pas et la consigne dans le Error Log ; le mode Appliquer la refuse. Passez en mode Appliquer lorsqu'un appel réel n'a laissé aucune incohérence dans le Error Log."
 
 #. Label of a Select field in DocType 'TP Call Log'
 #. Label of a Select field in DocType 'TP Conference Participant'
@@ -1107,8 +1077,7 @@ msgstr "Utilisateur"
 msgid "User Name"
 msgstr "Nom d'utilisateur"
 
-#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone
-#. Number
+#. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone Number
 #. Config'
 #. Option for the 'Outside Hours Action' (Select) field in DocType 'TP Phone
 #. Number Config'
@@ -1131,9 +1100,7 @@ msgstr "Message d'accueil"
 
 #: telephony/twilio/twilio_handler.py:529
 msgid "We are currently closed. Please call back during business hours."
-msgstr ""
-"Nous sommes actuellement fermés. Veuillez rappeler pendant nos heures "
-"d'ouverture."
+msgstr "Nous sommes actuellement fermés. Veuillez rappeler pendant nos heures d'ouverture."
 
 #. Label of a Select field in DocType 'TP Twilio Settings'
 #: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:56
@@ -1156,22 +1123,18 @@ msgstr "Mercredi"
 msgid "What to do if no agent answers"
 msgstr "Que faire si aucun agent ne répond"
 
-#. Description of the 'Available' (Check) field in DocType 'TP Telephony
-#. Agent'
+#. Description of the 'Available' (Check) field in DocType 'TP Telephony Agent'
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:71
 msgid "When unchecked, this agent will not receive incoming calls"
-msgstr ""
-"Si cette case est décochée, cet agent ne recevra pas d'appels entrants"
+msgstr "Si cette case est décochée, cet agent ne recevra pas d'appels entrants"
 
 #: telephony/exotel/handler.py:113
 msgid "You do not have Exotel Number set in your Telephony Agent"
-msgstr ""
-"Vous n'avez pas de numéro Exotel défini dans votre agent de téléphonie"
+msgstr "Vous n'avez pas de numéro Exotel défini dans votre agent de téléphonie"
 
 #: telephony/exotel/handler.py:125
 msgid "You do not have mobile number set in your Telephony Agent"
-msgstr ""
-"Vous n'avez pas de numéro de mobile défini dans votre agent de téléphonie"
+msgstr "Vous n'avez pas de numéro de mobile défini dans votre agent de téléphonie"
 
 #. Option for the 'Recording Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
@@ -1196,3 +1159,4 @@ msgstr "record-from-answer-dual"
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:211
 msgid "record-from-ringing-dual"
 msgstr "record-from-ringing-dual"
+
