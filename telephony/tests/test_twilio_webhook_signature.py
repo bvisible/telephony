@@ -1,5 +1,5 @@
 # //// Neoffice — added file (no upstream equivalent)
-"""The Twilio webhooks check the request signature: off, observe (log, serve) or enforce (refuse).
+"""The Twilio webhooks check the request signature: off, observe (log, serve) or enforce (refuse, the default).
 
 Twilio is the guest that calls these webhooks in real life, so the requests are played as Guest. A request is
 built as nginx hands it to the site: plain HTTP to the host Twilio called, with X-Forwarded-Proto https
@@ -120,7 +120,46 @@ class TestTwilioWebhookSignature(FrappeTestCase):
                     twilio_incoming_call_handler(**data)
         self.assertFalse(frappe.db.exists("TP Call Log", CALL_SID))
 
-    def test_observe_is_the_default_serves_and_logs_one_row_per_window(self):
+    def test_enforce_is_the_default_an_empty_setting_refuses(self):
+        # The setting is empty in setUp: an unset check refuses what does not verify and serves what does.
+        self.make_request()
+        with as_role("Guest"), self.assertRaises(frappe.PermissionError):
+            twilio_incoming_call_handler(**FORM)
+        self.assertFalse(frappe.db.exists("TP Call Log", CALL_SID))
+        self.assertFalse(self.mismatch_rows(), "a refusal writes no mismatch row")
+
+        self.make_request(sign_with=AUTH_TOKEN)
+        with as_role("Guest"):
+            twilio_incoming_call_handler(**FORM)
+        self.assertTrue(frappe.db.exists("TP Call Log", CALL_SID))
+
+    def test_settings_that_cannot_be_read_refuse(self):
+        real_get_cached_doc = frappe.get_cached_doc
+
+        def settings_unreadable(doctype, *args, **kwargs):
+            if doctype == "TP Twilio Settings":
+                raise RuntimeError("broken")
+            return real_get_cached_doc(doctype, *args, **kwargs)
+
+        self.make_request(sign_with=AUTH_TOKEN)
+        with as_role("Guest"), patch.object(frappe, "get_cached_doc", side_effect=settings_unreadable):
+            with self.assertRaises(frappe.PermissionError):
+                api.validate_twilio_request("twilio_incoming_call_handler")
+
+    def test_the_patch_sets_an_empty_check_to_enforce_and_keeps_a_chosen_one(self):
+        from telephony.patches.v15_0.enforce_twilio_signature_by_default import execute
+
+        for before, after in [("", "Enforce"), (None, "Enforce"), ("Observe", "Observe"), ("Off", "Off")]:
+            with self.subTest(before=before):
+                frappe.db.set_single_value("TP Twilio Settings", "webhook_signature_check", before)
+                execute()
+                execute()  # a second run changes nothing
+                self.assertEqual(
+                    frappe.db.get_single_value("TP Twilio Settings", "webhook_signature_check"), after
+                )
+
+    def test_observe_serves_and_logs_one_row_per_window(self):
+        self.set_mode("Observe")
         self.make_request()
         with as_role("Guest"):
             twilio_incoming_call_handler(**FORM)
@@ -142,6 +181,7 @@ class TestTwilioWebhookSignature(FrappeTestCase):
         self.assertFalse(self.mismatch_rows())
 
     def test_observe_serves_a_call_even_when_the_check_cannot_run(self):
+        self.set_mode("Observe")
         self.make_request(sign_with=AUTH_TOKEN)
         with patch.object(api, "twilio_signature_mismatch", side_effect=RuntimeError("broken")), as_role("Guest"):
             twilio_incoming_call_handler(**FORM)
@@ -252,6 +292,7 @@ class TestTwilioWebhookSignature(FrappeTestCase):
         self.assertNotIn("<img", stored)
 
     def test_the_mismatch_row_names_the_urls_tried_and_no_value(self):
+        self.set_mode("Observe")
         self.make_request(data={**FORM, "From": "+15558887777"})
         with as_role("Guest"):
             twilio_incoming_call_handler(**{**FORM, "From": "+15558887777"})

@@ -25,28 +25,30 @@ def is_enabled():
 # (neoffice-maintenance#2296). Upstream now refuses every request that does not verify; behind
 # our proxies the URL Twilio signed may not be the one rebuilt here, and a wrong check refuses every incoming call
 # (#2276), which only a real call can rule out. So the check has three states, in TP Twilio Settings (Webhook
-# signature check): Off, Observe (a mismatch is logged, never refused: the default, also when the field is empty)
-# and Enforce (a mismatch is refused). Switch to Enforce once a real call left no mismatch in the Error Log.
+# signature check): Enforce (a mismatch is refused: the default, also when the field is empty or the settings
+# cannot be read, since no instance takes real calls through Twilio yet), Observe (a mismatch is logged, never
+# refused: to find a wrong URL with a real call) and Off (neoffice-maintenance#893).
 SIGNATURE_CHECK_OFF = "Off"
 SIGNATURE_CHECK_OBSERVE = "Observe"
 SIGNATURE_CHECK_ENFORCE = "Enforce"
+SIGNATURE_CHECK_DEFAULT = SIGNATURE_CHECK_ENFORCE  # //// Neoffice — an empty setting enforces (#893)
 # One Error Log row per webhook in this window, the others in the twilio log file: a forged request must not
 # write a row each time.
 SIGNATURE_MISMATCH_LOG_EVERY = 600
 
 
 def validate_twilio_request(webhook: str | None = None) -> None:
-    """Checks the Twilio signature of the request, as TP Twilio Settings says (Off, Observe, Enforce).
+    """Checks the Twilio signature of the request, as TP Twilio Settings says (Enforce, Observe, Off).
 
     `webhook` names the method in the log; upstream calls this with no argument, so it defaults to the path's.
-    In Observe, nothing in the check itself may refuse a call: a check that cannot run is a mismatch to log.
-    In Enforce it is a refusal.
+    An empty setting, or settings that cannot be read, enforce. In Observe, nothing in the check itself may
+    refuse a call: a check that cannot run is a mismatch to log. In Enforce it is a refusal.
     """
-    try:  # //// Neoffice — Observe never refuses, see the docstring
+    try:  # //// Neoffice — an empty or unreadable setting enforces (neoffice-maintenance#893)
         settings = frappe.get_cached_doc("TP Twilio Settings")
-        mode = settings.get("webhook_signature_check") or SIGNATURE_CHECK_OBSERVE
+        mode = settings.get("webhook_signature_check") or SIGNATURE_CHECK_DEFAULT
     except Exception:
-        settings, mode = None, SIGNATURE_CHECK_OBSERVE
+        settings, mode = None, SIGNATURE_CHECK_DEFAULT  # //// Neoffice — unreadable settings enforce (#893)
     if mode == SIGNATURE_CHECK_OFF:
         return
     try:  # //// Neoffice — Observe never refuses, see the docstring

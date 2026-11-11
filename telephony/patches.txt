@@ -8,3 +8,5 @@
 # (neoffice-maintenance#2296)
 telephony.patches.v15_0.encrypt_telephony_settings_secrets
 telephony.patches.v15_0.escape_voicemail_transcriptions
+# //// Neoffice — an empty Twilio webhook signature check enforces (neoffice-maintenance#893)
+telephony.patches.v15_0.enforce_twilio_signature_by_default

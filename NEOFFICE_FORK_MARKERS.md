@@ -20,7 +20,7 @@ and cost code of `telephony/twilio/api.py` and `twilio_handler.py`. Upstream has
 
 | Path | Why |
 |---|---|
-| `telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json` | Adds `webhook_signature_check` (Off / Observe / Enforce, default Observe): how `telephony.twilio.api.validate_twilio_request` treats a webhook whose Twilio signature does not verify. Upstream refuses always (its `validate_twilio_request`, 2026-10); we observe first, because a wrong URL refuses every incoming call and only a real call proves it (neoffice-maintenance#2276, #2296). |
+| `telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json` | Adds `webhook_signature_check` (Enforce / Observe / Off, default Enforce, an empty value enforces): how `telephony.twilio.api.validate_twilio_request` treats a webhook whose Twilio signature does not verify. Upstream refuses always (its `validate_twilio_request`, 2026-10); we keep Observe as a choice, because a wrong URL refuses every incoming call and only a real call proves it (neoffice-maintenance#2276, #2296). The default was Observe until 2026-11; the patch `telephony.patches.v15_0.enforce_twilio_signature_by_default` writes Enforce where the value is empty (neoffice-maintenance#893). |
 | `telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json` | `webhook_verify_token` is a Password field, not Data: it is the only credential of the guest Exotel webhook, and every account that may read the settings (role All) read it in clear. The patch `telephony.patches.v15_0.encrypt_telephony_settings_secrets` moves a saved value into `__Auth` (neoffice-maintenance#2296). |
 
 ### Upstream fixes to absorb at the next merge
