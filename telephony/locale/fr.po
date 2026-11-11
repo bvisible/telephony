@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telephony VERSION\n"
 "Report-Msgid-Bugs-To: pratik@frappe.io\n"
-"POT-Creation-Date: 2026-11-10 03:34+0000\n"
+"POT-Creation-Date: 2026-11-11 12:11+0000\n"
 "PO-Revision-Date: 2026-05-12 16:22+0034\n"
 "Last-Translator: pratik@frappe.io\n"
 "Language: fr\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: telephony/twilio/api.py:615
+#: telephony/twilio/api.py:617
 #, python-brace-format
 msgid ""
 "\n"
@@ -87,7 +87,7 @@ msgstr "Actif"
 msgid "Agent"
 msgstr "Agent"
 
-#: telephony/twilio/api.py:405 telephony/twilio/api.py:446
+#: telephony/twilio/api.py:407 telephony/twilio/api.py:448
 #: telephony/twilio/twilio_handler.py:593
 msgid "Agent is unavailable to take the call, please call after some time."
 msgstr "L'agent n'est pas disponible pour prendre l'appel, veuillez rappeler plus tard."
@@ -113,7 +113,7 @@ msgstr "Agents vers lesquels acheminer les appels, par ordre de priorité"
 msgid "All"
 msgstr "Tous"
 
-#: telephony/twilio/api.py:396 telephony/twilio/api.py:480
+#: telephony/twilio/api.py:398 telephony/twilio/api.py:482
 #: telephony/twilio/twilio_handler.py:547
 #: telephony/twilio/twilio_handler.py:554
 msgid "All agents are currently busy. Please try again later."
@@ -365,11 +365,11 @@ msgstr "Le numéro Exotel {0} n'est pas valide"
 msgid "Failed"
 msgstr "Échoué"
 
-#: telephony/twilio/api.py:294
+#: telephony/twilio/api.py:296
 msgid "Failed to capture Twilio recording"
 msgstr "Échec de la capture de l'enregistrement Twilio"
 
-#: telephony/twilio/api.py:324
+#: telephony/twilio/api.py:326
 msgid "Failed to update Twilio call status"
 msgstr "Échec de la mise à jour du statut d'appel Twilio"
 
@@ -454,11 +454,11 @@ msgstr "SID de compte ou jeton d'authentification invalide."
 msgid "Invalid Exotel Number"
 msgstr "Numéro Exotel invalide"
 
-#: telephony/twilio/api.py:184
+#: telephony/twilio/api.py:186
 msgid "Invalid Twilio request"
 msgstr "Requête Twilio invalide"
 
-#: telephony/twilio/api.py:59
+#: telephony/twilio/api.py:61
 msgid "Invalid Twilio request signature"
 msgstr "Signature de requête Twilio invalide"
 
@@ -572,7 +572,7 @@ msgstr "Nom"
 msgid "New"
 msgstr "Nouveau"
 
-#: telephony/twilio/api.py:613
+#: telephony/twilio/api.py:615
 #, python-brace-format
 msgid "New Voicemail from {0}"
 msgstr "Nouveau message vocal de {0}"
@@ -691,7 +691,7 @@ msgstr "Veuillez configurer les heures d'ouverture ou désactiver l'option"
 msgid "Please enable twilio to proceed."
 msgstr "Veuillez activer Twilio pour continuer."
 
-#: telephony/twilio/api.py:382 telephony/twilio/api.py:466
+#: telephony/twilio/api.py:384 telephony/twilio/api.py:468
 #: telephony/twilio/twilio_handler.py:569
 msgid "Please leave a message after the tone."
 msgstr "Veuillez laisser un message après le signal sonore."
@@ -959,7 +959,7 @@ msgstr "Moyen de téléphonie"
 msgid "Telephony User"
 msgstr "Telephony User"
 
-#: telephony/twilio/api.py:574
+#: telephony/twilio/api.py:576
 msgid "Thank you. Goodbye."
 msgstr "Merci. Au revoir."
 
@@ -1046,8 +1046,8 @@ msgstr "Numéro Twilio"
 #. Description of the 'Webhook Signature Check' (Select) field in DocType 'TP
 #. Twilio Settings'
 #: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:53
-msgid "Twilio signs every webhook request. Observe serves a request that does not verify and records it in the Error Log; Enforce refuses it. Switch to Enforce once a real call left no mismatch in the Error Log."
-msgstr "Twilio signe chaque requête webhook. Le mode Observer traite une requête dont la signature ne correspond pas et la consigne dans le Error Log ; le mode Appliquer la refuse. Passez en mode Appliquer lorsqu'un appel réel n'a laissé aucune incohérence dans le Error Log."
+msgid "Twilio signs every webhook request. Enforce refuses a request that does not verify, and is the default. Observe serves it and records it in the Error Log, to find a wrong webhook URL with a real call."
+msgstr "Twilio signe chaque requête webhook. Appliquer refuse toute requête dont la signature n'est pas vérifiée, et c'est la valeur par défaut. Observer la traite et la consigne dans l'Error Log, pour repérer une URL de webhook erronée à l'aide d'un appel réel."
 
 #. Label of a Select field in DocType 'TP Call Log'
 #. Label of a Select field in DocType 'TP Conference Participant'
