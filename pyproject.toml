@@ -10,7 +10,10 @@ dynamic = ["version"]
 dependencies = [
     # "frappe~=15.0.0" # Installed and managed by bench.
     "twilio==8.5.0",
-    "bleach~=6.3.0",
+    # //// Neoffice — upstream pins bleach~=6.3.0; our frappe pins bleach~=6.4.0 and the two cannot be
+    # //// installed together (pip would refuse or downgrade frappe's). Accept both. Drop when upstream
+    # //// allows 6.4.
+    "bleach>=6.3.0,<7.0.0",
 ]
 
 [build-system]

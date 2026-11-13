@@ -65,6 +65,8 @@ def validate_twilio_request(webhook: str | None = None) -> None:
         frappe.logger("twilio").warning(f"{webhook}: Twilio signature mismatch not logged ({reason})")
 
 
+# //// Neoffice — added: the webhook's name for the log of validate_twilio_request(). Upstream's single-URL
+# //// get_request_url() is not here: get_request_urls() below gives every URL a proxy may present.
 def _webhook_name() -> str:
     request = getattr(frappe.local, "request", None)
     return request.path.rsplit(".", 1)[-1] if request else "unknown webhook"
