@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Telephony VERSION\n"
 "Report-Msgid-Bugs-To: pratik@frappe.io\n"
-"POT-Creation-Date: 2026-11-11 12:11+0000\n"
+"POT-Creation-Date: 2026-11-18 03:34+0000\n"
 "PO-Revision-Date: 2026-05-12 16:22+0034\n"
 "Last-Translator: pratik@frappe.io\n"
 "Language: fr\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.18.0\n"
 
-#: telephony/twilio/api.py:617
+#: telephony/twilio/api.py:619
 #, python-brace-format
 msgid ""
 "\n"
@@ -87,8 +87,8 @@ msgstr "Actif"
 msgid "Agent"
 msgstr "Agent"
 
-#: telephony/twilio/api.py:407 telephony/twilio/api.py:448
-#: telephony/twilio/twilio_handler.py:593
+#: telephony/twilio/api.py:409 telephony/twilio/api.py:450
+#: telephony/twilio/twilio_handler.py:596
 msgid "Agent is unavailable to take the call, please call after some time."
 msgstr "L'agent n'est pas disponible pour prendre l'appel, veuillez rappeler plus tard."
 
@@ -113,9 +113,9 @@ msgstr "Agents vers lesquels acheminer les appels, par ordre de priorité"
 msgid "All"
 msgstr "Tous"
 
-#: telephony/twilio/api.py:398 telephony/twilio/api.py:482
-#: telephony/twilio/twilio_handler.py:547
-#: telephony/twilio/twilio_handler.py:554
+#: telephony/twilio/api.py:400 telephony/twilio/api.py:484
+#: telephony/twilio/twilio_handler.py:550
+#: telephony/twilio/twilio_handler.py:557
 msgid "All agents are currently busy. Please try again later."
 msgstr "Tous les agents sont actuellement occupés. Veuillez réessayer plus tard."
 
@@ -133,6 +133,11 @@ msgstr "Numéros attribués"
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:92
 msgid "Assigned Phone Numbers"
 msgstr "Numéros de téléphone attribués"
+
+#. Label of a Int field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:77
+msgid "Attempts"
+msgstr "Tentatives"
 
 #. Label of a Password field in DocType 'TP Twilio Settings'
 #: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:81
@@ -229,6 +234,15 @@ msgstr "Peut écouter les enregistrements"
 msgid "Canceled"
 msgstr "Annulé"
 
+#: telephony/twilio/sms.py:97
+msgid "Cannot send an empty SMS."
+msgstr "Impossible d'envoyer un SMS vide."
+
+#. Label of a Select field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:29
+msgid "Channel"
+msgstr ""
+
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
 msgid "Completed"
@@ -260,6 +274,15 @@ msgstr "Connecté"
 msgid "Cost Calculated"
 msgstr "Coût calculé"
 
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:109
+#, python-brace-format
+msgid "Could not reach Twilio to confirm {0}. Check the Twilio credentials and connectivity, or disable SMS to save."
+msgstr "Impossible de joindre Twilio pour confirmer {0}. Vérifiez les identifiants Twilio et la connectivité, ou désactivez les SMS pour enregistrer."
+
+#: telephony/twilio/sms.py:126
+msgid "Could not send the SMS. Please try again later."
+msgstr "Impossible d'envoyer le SMS. Veuillez réessayer plus tard."
+
 #. Label of a Datetime field in DocType 'TP Call Conference'
 #: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:63
 msgid "Created At"
@@ -280,6 +303,11 @@ msgstr "Jour"
 msgid "Default Medium"
 msgstr "Moyen par défaut"
 
+#. Option for the 'Status' (Select) field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:41
+msgid "Delivered"
+msgstr ""
+
 #. Label of a Data field in DocType 'TP Call Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:175
 msgid "DevOps Report ID"
@@ -299,6 +327,26 @@ msgstr "Durée"
 #: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:87
 msgid "Duration (seconds)"
 msgstr "Durée (secondes)"
+
+#. Option for the 'Channel' (Select) field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:30
+msgid "Email"
+msgstr ""
+
+#. Label of a Data field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:107
+msgid "Email OTP Subject"
+msgstr "Objet de l'OTP par e-mail"
+
+#. Label of a Check field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:39
+msgid "Enable Email OTP"
+msgstr "Activer l'OTP par e-mail"
+
+#. Label of a Check field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:32
+msgid "Enable SMS (Twilio)"
+msgstr "Activer les SMS (Twilio)"
 
 #. Label of a Check field in DocType 'TP Exotel Settings'
 #. Label of a Check field in DocType 'TP Routing Agent'
@@ -332,6 +380,11 @@ msgstr "Terminé le"
 msgid "Enforce"
 msgstr "Appliquer"
 
+#. Label of a Small Text field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:96
+msgid "Error"
+msgstr ""
+
 #. Option for the 'Telephony Medium' (Select) field in DocType 'TP Call Log'
 #. Option for the 'Default Medium' (Select) field in DocType 'TP Telephony
 #. Agent'
@@ -360,16 +413,23 @@ msgstr "Numéro Exotel manquant"
 msgid "Exotel Number {0} is not valid"
 msgstr "Le numéro Exotel {0} n'est pas valide"
 
+#. Label of a Datetime field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:88
+msgid "Expires At"
+msgstr "Expire le"
+
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
+#. Option for the 'Status' (Select) field in DocType 'TP SMS Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:41
 msgid "Failed"
 msgstr "Échoué"
 
-#: telephony/twilio/api.py:296
+#: telephony/twilio/api.py:298
 msgid "Failed to capture Twilio recording"
 msgstr "Échec de la capture de l'enregistrement Twilio"
 
-#: telephony/twilio/api.py:326
+#: telephony/twilio/api.py:328
 msgid "Failed to update Twilio call status"
 msgstr "Échec de la mise à jour du statut d'appel Twilio"
 
@@ -390,7 +450,9 @@ msgid "Friendly Name"
 msgstr "Nom convivial"
 
 #. Label of a Data field in DocType 'TP Call Log'
+#. Label of a Data field in DocType 'TP SMS Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:62
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:60
 msgid "From"
 msgstr "De"
 
@@ -398,6 +460,11 @@ msgstr "De"
 #: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:53
 msgid "From Number"
 msgstr "Numéro d'origine"
+
+#. Option for the 'Purpose' (Select) field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:31
+msgid "General"
+msgstr ""
 
 #. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone Number
 #. Config'
@@ -454,7 +521,7 @@ msgstr "SID de compte ou jeton d'authentification invalide."
 msgid "Invalid Exotel Number"
 msgstr "Numéro Exotel invalide"
 
-#: telephony/twilio/api.py:186
+#: telephony/twilio/api.py:188
 msgid "Invalid Twilio request"
 msgstr "Requête Twilio invalide"
 
@@ -474,6 +541,11 @@ msgstr "Sous-domaine invalide"
 #: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json:25
 msgid "Is Primary"
 msgstr "Est primaire"
+
+#. Label of a Check field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:58
+msgid "Is Verified"
+msgstr "Est vérifié"
 
 #. Label of a Datetime field in DocType 'TP Conference Participant'
 #: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:73
@@ -526,6 +598,12 @@ msgstr "Manuel"
 msgid "Max Ring Time (s)"
 msgstr "Durée maximale de sonnerie (s)"
 
+#. Description of the 'Send SMS Rate Limit (per hour)' (Int) field in DocType
+#. 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json
+msgid "Maximum plain SMS one client may send per hour via send_sms. Set to 0 for no limit — do that only when a trusted backend does the sending. OTP endpoints are limited separately, per recipient."
+msgstr "Nombre maximal de SMS en texte brut qu'un client peut envoyer par heure via send_sms. Mettre à 0 pour aucune limite, à faire uniquement lorsqu'un backend de confiance effectue l'envoi. Les points de terminaison OTP sont limités séparément, par destinataire."
+
 #. Description of the 'Max Ring Time (s)' (Int) field in DocType 'TP Phone
 #. Number Config'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:93
@@ -541,8 +619,10 @@ msgstr "Moyen"
 #. Config'
 #. Option for the 'Outside Hours Action' (Select) field in DocType 'TP Phone
 #. Number Config'
+#. Label of a Small Text field in DocType 'TP SMS Log'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:104
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:143
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:66
 msgid "Message"
 msgstr "Message"
 
@@ -572,7 +652,7 @@ msgstr "Nom"
 msgid "New"
 msgstr "Nouveau"
 
-#: telephony/twilio/api.py:615
+#: telephony/twilio/api.py:617
 #, python-brace-format
 msgid "New Voicemail from {0}"
 msgstr "Nouveau message vocal de {0}"
@@ -603,6 +683,11 @@ msgstr ""
 msgid "Notification Email"
 msgstr "Email de notification"
 
+#. Label of a Link field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:101
+msgid "Notification Log"
+msgstr ""
+
 #. Label of a Data field in DocType 'TP Telephony Phone'
 #: telephony/ftelephony/doctype/tp_telephony_phone/tp_telephony_phone.json:17
 msgid "Number"
@@ -612,6 +697,72 @@ msgstr "Numéro"
 msgctxt "TP Telephony Phone"
 msgid "Number"
 msgstr "Numéro"
+
+#. Description of the 'OTP Max Attempts' (Int) field in DocType 'TP OTP
+#. Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:89
+msgid "Number of incorrect attempts allowed before an OTP is invalidated."
+msgstr "Nombre de tentatives incorrectes autorisées avant l'invalidation d'un OTP."
+
+#. Label of a Section Break field in DocType 'TP OTP Settings'
+#. Option for the 'Purpose' (Select) field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:66
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:31
+msgid "OTP"
+msgstr ""
+
+#. Label of a Int field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:80
+msgid "OTP Expiry (In Seconds)"
+msgstr "Expiration de l'OTP (en secondes)"
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:49
+msgid "OTP Expiry (in seconds) must be at least 1."
+msgstr "L'expiration de l'OTP (en secondes) doit être d'au moins 1."
+
+#. Label of a Data field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:69
+msgid "OTP Hash"
+msgstr "Hachage de l'OTP"
+
+#. Label of a Int field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:72
+msgid "OTP Length"
+msgstr "Longueur de l'OTP"
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:43
+#, python-brace-format
+msgid "OTP Length must be at least {0}."
+msgstr "La longueur de l'OTP doit être d'au moins {0}."
+
+#. Label of a Int field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:92
+msgid "OTP Max Attempts"
+msgstr "Nombre maximal de tentatives OTP"
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:55
+msgid "OTP Max Attempts must be at least 1."
+msgstr "Le nombre maximal de tentatives OTP doit être d'au moins 1."
+
+#. Label of a Small Text field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:100
+msgid "OTP Message Template"
+msgstr "Modèle de message OTP"
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:71
+#, python-brace-format
+msgid "OTP Message Template has an unknown placeholder: {0}."
+msgstr "Le modèle de message OTP contient un espace réservé inconnu : {0}."
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:78
+#, python-brace-format
+msgid "OTP Message Template is malformed: {0}."
+msgstr "Le modèle de message OTP est mal formé : {0}."
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:60
+#, python-brace-format
+msgid "OTP Message Template must contain the {otp} placeholder."
+msgstr "Le modèle de message OTP doit contenir l'espace réservé {otp}."
 
 #. Option for the 'Webhook Signature Check' (Select) field in DocType 'TP
 #. Twilio Settings'
@@ -687,14 +838,43 @@ msgstr "Numéros de téléphone depuis lesquels cet agent peut recevoir des appe
 msgid "Please configure business hours or disable the option"
 msgstr "Veuillez configurer les heures d'ouverture ou désactiver l'option"
 
-#: telephony/twilio/twilio_handler.py:201
+#: telephony/email_otp.py:47
+msgid "Please enable Email OTP in TP OTP Settings."
+msgstr "Veuillez activer l'OTP par e-mail dans les paramètres TP OTP."
+
+#: telephony/twilio/sms.py:57
+msgid "Please enable SMS in TP OTP Settings to send SMS."
+msgstr "Veuillez activer les SMS dans les paramètres TP OTP pour envoyer des SMS."
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:27
+msgid "Please enable and configure TP Twilio Settings first."
+msgstr "Veuillez d'abord activer et configurer les paramètres TP Twilio."
+
+#: telephony/twilio/sms.py:102
+msgid "Please enable and configure TP Twilio Settings to send SMS."
+msgstr "Veuillez activer et configurer les paramètres TP Twilio pour envoyer des SMS."
+
+#: telephony/twilio/twilio_handler.py:204
 msgid "Please enable twilio to proceed."
 msgstr "Veuillez activer Twilio pour continuer."
 
-#: telephony/twilio/api.py:384 telephony/twilio/api.py:468
-#: telephony/twilio/twilio_handler.py:569
+#: telephony/twilio/api.py:386 telephony/twilio/api.py:470
+#: telephony/twilio/twilio_handler.py:572
 msgid "Please leave a message after the tone."
 msgstr "Veuillez laisser un message après le signal sonore."
+
+#: telephony/email_otp.py:39
+msgid "Please provide a single email address."
+msgstr "Veuillez indiquer une seule adresse e-mail."
+
+#: telephony/email_otp.py:35
+msgid "Please provide a valid email address."
+msgstr "Veuillez indiquer une adresse e-mail valide."
+
+#: telephony/twilio/sms.py:95 telephony/twilio/sms.py:181
+#: telephony/twilio/sms.py:219
+msgid "Please provide a valid phone number."
+msgstr "Veuillez indiquer un numéro de téléphone valide."
 
 #: telephony/exotel/handler.py:95
 msgid "Please setup Exotel intergration"
@@ -712,10 +892,29 @@ msgstr "Principal"
 msgid "Priority"
 msgstr "Priorité"
 
+#. Label of a Data field in DocType 'TP OTP'
+#. Label of a Select field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:49
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:30
+msgid "Purpose"
+msgstr ""
+
+#: telephony/otp.py:62
+#, python-brace-format
+msgid "Purpose cannot be longer than {0} characters."
+msgstr "Le motif ne peut pas dépasser {0} caractères."
+
 #. Option for the 'Status' (Select) field in DocType 'TP Call Log'
+#. Option for the 'Status' (Select) field in DocType 'TP SMS Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:69
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:41
 msgid "Queued"
 msgstr "Dans la file d'attente"
+
+#. Label of a Data field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:38
+msgid "Recipient"
+msgstr ""
 
 #. Label of a Check field in DocType 'TP Phone Number Config'
 #. Label of a Check field in DocType 'TP Twilio Settings'
@@ -792,6 +991,16 @@ msgstr "Agents de routage"
 msgid "Routing Configuration"
 msgstr "Configuration du routage"
 
+#. Option for the 'Channel' (Select) field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:30
+msgid "SMS"
+msgstr ""
+
+#. Label of a Data field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:50
+msgid "SMS From Number"
+msgstr "Numéro d'expéditeur SMS"
+
 #. Option for the 'Day' (Select) field in DocType 'TP Business Hours'
 #: telephony/ftelephony/doctype/tp_business_hours/tp_business_hours.json:20
 msgid "Saturday"
@@ -815,11 +1024,37 @@ msgstr "Secondes à attendre avant de faire sonner cet agent (pour le mode séqu
 msgid "Seconds to wait before ringing this agent for this number"
 msgstr "Secondes à attendre avant de faire sonner cet agent pour ce numéro"
 
+#. Label of a Int field in DocType 'TP OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:59
+msgid "Send SMS Rate Limit (per hour)"
+msgstr "Limite d'envoi de SMS (par heure)"
+
 #. Description of the 'Notification Email' (Data) field in DocType 'TP Phone
 #. Number Config'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:179
 msgid "Send voicemail notification to this email"
 msgstr "Envoyer la notification de message vocal à cet e-mail"
+
+#. Description of the 'Enable Email OTP' (Check) field in DocType 'TP OTP
+#. Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:36
+msgid "Sends OTPs over email using Frappe's configured outgoing Email Account, independent of Twilio."
+msgstr "Envoie des OTP par e-mail via le compte de messagerie sortant configuré dans Frappe, indépendamment de Twilio."
+
+#. Option for the 'Status' (Select) field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:41
+msgid "Sent"
+msgstr ""
+
+#. Label of a Datetime field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:90
+msgid "Sent At"
+msgstr "Envoyé le"
+
+#. Label of a Link field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:83
+msgid "Sent By"
+msgstr "Envoyé par"
 
 #. Option for the 'Ring Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
@@ -844,10 +1079,12 @@ msgstr "Heure de début"
 #. Label of a Select field in DocType 'TP Call Log'
 #. Label of a Section Break field in DocType 'TP Conference Participant'
 #. Label of a Select field in DocType 'TP Conference Participant'
+#. Label of a Select field in DocType 'TP SMS Log'
 #. Label of a Select field in DocType 'TP Voicemail'
 #: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:46
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:68
 #: telephony/ftelephony/doctype/tp_conference_participant/tp_conference_participant.json:56
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:40
 #: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:41
 msgid "Status"
 msgstr "Statut"
@@ -866,7 +1103,10 @@ msgstr "Dimanche"
 #: telephony/ftelephony/doctype/tp_call_conference/tp_call_conference.json:124
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:205
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:111
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:124
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:125
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:242
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:118
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:162
 #: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:149
 #: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:120
@@ -875,6 +1115,7 @@ msgstr "Administrateur système"
 
 #. Name of a role
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:217
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:126
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:174
 msgid "TP Agent"
 msgstr "TP Agent"
@@ -912,11 +1153,24 @@ msgstr "TP Exotel Settings"
 #. Name of a role
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:229
 #: telephony/ftelephony/doctype/tp_exotel_settings/tp_exotel_settings.json:121
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:136
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:135
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:254
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:136
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:186
 #: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:159
 msgid "TP Manager"
 msgstr "TP Manager"
+
+#. Name of a DocType
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:112
+msgid "TP OTP"
+msgstr ""
+
+#. Name of a DocType
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:116
+msgid "TP OTP Settings"
+msgstr "Paramètres TP OTP"
 
 #. Name of a DocType
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:230
@@ -927,6 +1181,11 @@ msgstr "TP Phone Number Config"
 #: telephony/ftelephony/doctype/tp_routing_agent/tp_routing_agent.json:67
 msgid "TP Routing Agent"
 msgstr "TP Routing Agent"
+
+#. Name of a DocType
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:106
+msgid "TP SMS Log"
+msgstr "Journal SMS TP"
 
 #. Name of a DocType
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:150
@@ -959,7 +1218,7 @@ msgstr "Moyen de téléphonie"
 msgid "Telephony User"
 msgstr "Telephony User"
 
-#: telephony/twilio/api.py:576
+#: telephony/twilio/api.py:578
 msgid "Thank you. Goodbye."
 msgstr "Merci. Au revoir."
 
@@ -972,8 +1231,16 @@ msgstr "Le sous-domaine doit être l'hôte API de votre compte Exotel, par exemp
 msgid "Thursday"
 msgstr "Jeudi"
 
+#. Description of the 'OTP Expiry (In Seconds)' (Int) field in DocType 'TP OTP
+#. Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:77
+msgid "Time in seconds before a generated OTP expires."
+msgstr "Durée en secondes avant l'expiration d'un code OTP généré."
+
 #. Label of a Data field in DocType 'TP Call Log'
+#. Label of a Data field in DocType 'TP SMS Log'
 #: telephony/ftelephony/doctype/tp_call_log/tp_call_log.json:98
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:52
 msgid "To"
 msgstr "Vers"
 
@@ -981,6 +1248,10 @@ msgstr "Vers"
 #: telephony/ftelephony/doctype/tp_voicemail/tp_voicemail.json:64
 msgid "To Number"
 msgstr "Vers le numéro"
+
+#: telephony/otp.py:139
+msgid "Too many incorrect attempts. Please try again later."
+msgstr "Trop de tentatives incorrectes. Veuillez réessayer plus tard."
 
 #. Label of a Check field in DocType 'TP Phone Number Config'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:190
@@ -1043,6 +1314,17 @@ msgstr "Applications Twilio"
 msgid "Twilio Number"
 msgstr "Numéro Twilio"
 
+#. Label of a Data field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:77
+msgid "Twilio SID"
+msgstr ""
+
+#. Description of the 'SMS From Number' (Data) field in DocType 'TP OTP
+#. Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:47
+msgid "Twilio phone number (with country code) that SMS messages are sent from. Must be an SMS-capable number on the connected Twilio account."
+msgstr "Numéro de téléphone Twilio (avec indicatif pays) à partir duquel les SMS sont envoyés. Doit être un numéro compatible SMS du compte Twilio connecté."
+
 #. Description of the 'Webhook Signature Check' (Select) field in DocType 'TP
 #. Twilio Settings'
 #: telephony/ftelephony/doctype/tp_twilio_settings/tp_twilio_settings.json:53
@@ -1060,10 +1342,22 @@ msgstr "Type"
 msgid "Unauthorized request"
 msgstr "Requête non autorisée"
 
+#. Option for the 'Status' (Select) field in DocType 'TP SMS Log'
+#: telephony/ftelephony/doctype/tp_sms_log/tp_sms_log.json:41
+msgid "Undelivered"
+msgstr "Non distribué"
+
 #. Label of a Check field in DocType 'TP Phone Number Config'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:128
 msgid "Use Business Hours"
 msgstr "Utiliser les heures d'ouverture"
+
+#. Description of the 'OTP Message Template' (Small Text) field in DocType 'TP
+#. OTP Settings'
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.json:97
+#, python-brace-format
+msgid "Use {otp} and {expiry_minutes} as placeholders. Used for both SMS and Email."
+msgstr "Utilisez {otp} et {expiry_minutes} comme espaces réservés. Utilisé pour les SMS et les e-mails."
 
 #. Label of a Link field in DocType 'TP Conference Participant'
 #. Label of a Link field in DocType 'TP Telephony Agent'
@@ -1076,6 +1370,11 @@ msgstr "Utilisateur"
 #: telephony/ftelephony/doctype/tp_telephony_agent/tp_telephony_agent.json:45
 msgid "User Name"
 msgstr "Nom d'utilisateur"
+
+#. Label of a Datetime field in DocType 'TP OTP'
+#: telephony/ftelephony/doctype/tp_otp/tp_otp.json:95
+msgid "Verified At"
+msgstr "Vérifié le"
 
 #. Option for the 'No Answer Action' (Select) field in DocType 'TP Phone Number
 #. Config'
@@ -1098,7 +1397,7 @@ msgstr "Messagerie vocale activée"
 msgid "Voicemail Greeting"
 msgstr "Message d'accueil"
 
-#: telephony/twilio/twilio_handler.py:529
+#: telephony/twilio/twilio_handler.py:532
 msgid "We are currently closed. Please call back during business hours."
 msgstr "Nous sommes actuellement fermés. Veuillez rappeler pendant nos heures d'ouverture."
 
@@ -1136,6 +1435,10 @@ msgstr "Vous n'avez pas de numéro Exotel défini dans votre agent de téléphon
 msgid "You do not have mobile number set in your Telephony Agent"
 msgstr "Vous n'avez pas de numéro de mobile défini dans votre agent de téléphonie"
 
+#: telephony/otp.py:80
+msgid "You hit the rate limit because of too many requests. Please try after sometime."
+msgstr ""
+
 #. Option for the 'Recording Mode' (Select) field in DocType 'TP Phone Number
 #. Config'
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:211
@@ -1159,4 +1462,14 @@ msgstr "record-from-answer-dual"
 #: telephony/ftelephony/doctype/tp_phone_number_config/tp_phone_number_config.json:211
 msgid "record-from-ringing-dual"
 msgstr "record-from-ringing-dual"
+
+#: telephony/ftelephony/doctype/tp_otp_settings/tp_otp_settings.py:116
+#, python-brace-format
+msgid "{0} is not a phone number on the connected Twilio account."
+msgstr "{0} n'est pas un numéro de téléphone du compte Twilio connecté."
+
+#: telephony/otp.py:235
+#, python-brace-format
+msgid "{0} is not a supported OTP channel. Use one of: {1}."
+msgstr "{0} n'est pas un canal OTP pris en charge. Utilisez l'un des suivants : {1}."
 
